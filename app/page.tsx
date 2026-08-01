@@ -13,6 +13,7 @@ import {
   FileText,
   TrendingUp,
   ShieldCheck,
+  AlertTriangle,
   Zap,
 } from 'lucide-react';
 
@@ -45,18 +46,23 @@ export default function DashboardPage() {
 
   const stats = React.useMemo(() => {
     if (!reports || reports.length === 0) {
-      return { totalTests: 0, normalCount: 0, abnormalCount: 0, latestDate: 'N/A', pctNormal: 100 };
+      return { totalTests: 0, normalCount: 0, abnormalCount: 0, latestDate: 'N/A', pctNormal: 100, abnormalNames: [] };
     }
 
     let normal = 0;
     let abnormal = 0;
     const testNames = new Set<string>();
+    const abnormalTestNames = new Set<string>();
 
     reports.forEach((r) => {
       r.tests.forEach((t) => {
         testNames.add(t.name);
-        if (t.isAbnormal) abnormal++;
-        else normal++;
+        if (t.isAbnormal) {
+          abnormal++;
+          abnormalTestNames.add(t.name);
+        } else {
+          normal++;
+        }
       });
     });
 
@@ -69,6 +75,7 @@ export default function DashboardPage() {
       totalTests: total,
       normalCount: normal,
       abnormalCount: abnormal,
+      abnormalNames: Array.from(abnormalTestNames),
       latestDate: sorted[0]?.formattedDate || 'N/A',
       latestLab: sorted[0]?.labName || 'N/A',
       reportCount: reports.length,
@@ -85,6 +92,10 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  const topAbnormalText = stats.abnormalNames.length > 0
+    ? stats.abnormalNames.slice(0, 3).join(' • ')
+    : 'All parameters in optimal range';
 
   return (
     <div className="space-y-6 pb-12">
@@ -109,42 +120,43 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 2. Quick Vital Overview Summary KPI Ribbon */}
+      {/* 2. Informative Clinical Overview Summary KPI Ribbon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPI 1: Active Out-of-Range Flags */}
         <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground">Monitored Biomarkers</span>
-            <div className="size-8 rounded-xl bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 flex items-center justify-center">
-              <Zap className="size-4 text-amber-500" />
+            <span className="text-xs font-semibold text-muted-foreground">Active Out-of-Range Flags</span>
+            <div className="size-8 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center">
+              <AlertTriangle className="size-4" />
             </div>
           </div>
           <div className="mt-2 flex items-baseline justify-between">
-            <span className="text-2xl font-extrabold font-mono text-foreground">{stats.totalBiomarkers}</span>
-            <span className="text-xs font-mono text-muted-foreground font-medium">Unique Parameters</span>
+            <span className="text-2xl font-extrabold font-mono text-rose-500">{stats.abnormalCount}</span>
+            <span className="text-xs font-mono text-muted-foreground font-medium">Require Focus</span>
           </div>
-          <div className="mt-2 flex items-center gap-2 text-[11px] font-mono">
-            <span className="text-emerald-500 font-bold">{stats.normalCount} Normal</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-rose-500 font-bold">{stats.abnormalCount} Flagged</span>
-          </div>
+          <p className="mt-2 text-[11px] text-muted-foreground font-mono font-medium truncate" title={topAbnormalText}>
+            {topAbnormalText}
+          </p>
         </Card>
 
+        {/* KPI 2: Biomarker Stability Trajectory */}
         <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground">Health Status Index</span>
+            <span className="text-xs font-semibold text-muted-foreground">Biomarker Stability Trajectory</span>
             <div className="size-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-              <CheckCircle2 className="size-4" />
+              <TrendingUp className="size-4" />
             </div>
           </div>
           <div className="mt-2 flex items-baseline justify-between">
             <span className="text-2xl font-extrabold font-mono text-emerald-500">{stats.pctNormal}%</span>
-            <span className="text-xs font-mono text-muted-foreground font-medium">In Reference Range</span>
+            <span className="text-xs font-mono text-muted-foreground font-medium">In Target Range</span>
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground font-medium truncate">
-            Based on {stats.totalTests} quantitative observations
+            <span className="text-emerald-500 font-bold">{stats.normalCount} Normalizing</span> • <span className="text-rose-500 font-bold">{stats.abnormalCount} Need Review</span>
           </p>
         </Card>
 
+        {/* KPI 3: Latest Diagnostic Visit */}
         <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground">Latest Diagnostic Visit</span>
@@ -160,6 +172,7 @@ export default function DashboardPage() {
           </p>
         </Card>
 
+        {/* KPI 4: Lab Report Archives */}
         <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground">Lab Report Archives</span>
@@ -169,10 +182,10 @@ export default function DashboardPage() {
           </div>
           <div className="mt-2 flex items-baseline justify-between">
             <span className="text-2xl font-extrabold font-mono text-foreground">{stats.reportCount}</span>
-            <span className="text-xs font-mono text-muted-foreground font-medium">Uploaded Reports</span>
+            <span className="text-xs font-mono text-muted-foreground font-medium">Reports Processed</span>
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground font-medium">
-            Complete longitudinal history
+            {stats.totalTests} quantitative observations
           </p>
         </Card>
       </div>
