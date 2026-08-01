@@ -174,7 +174,7 @@ export default function ReportDetailPage() {
       </div>
 
       {/* Patient & Report Banner Card */}
-      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -274,8 +274,8 @@ export default function ReportDetailPage() {
         </Card>
       </div>
 
-      {/* Tests Data Table */}
-      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+      {/* Tests Data Table - Generous Readable Table Padding & Font */}
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-bold text-foreground">Individual Test Results</h3>
@@ -326,21 +326,21 @@ export default function ReportDetailPage() {
             <Table>
               <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                 <TableRow>
-                  <TableHead>
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('name')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('name')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Biomarker Name <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
-                  <TableHead className="text-xs font-semibold">Observed Value</TableHead>
-                  <TableHead className="text-xs font-semibold">Unit</TableHead>
-                  <TableHead className="text-xs font-semibold">Standard Reference Range</TableHead>
-                  <TableHead>
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('category')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Observed Value</TableHead>
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Unit</TableHead>
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Standard Reference Range</TableHead>
+                  <TableHead className="py-3.5 px-4">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('category')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Category <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
-                  <TableHead className="text-right pr-6">
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('status')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4 text-right pr-6">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('status')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Status <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
@@ -356,30 +356,30 @@ export default function ReportDetailPage() {
                 ) : (
                   filteredTests.map((test) => (
                     <TableRow key={test.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
-                      <TableCell className="font-bold text-xs text-foreground">
+                      <TableCell className="py-3.5 px-4 font-bold text-sm text-foreground">
                         {test.name}
                       </TableCell>
-                      <TableCell className="font-mono text-xs font-extrabold text-foreground">
+                      <TableCell className="py-3.5 px-4 font-mono text-base font-extrabold text-foreground">
                         {test.rawValue}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground font-mono">
+                      <TableCell className="py-3.5 px-4 text-xs text-muted-foreground font-mono">
                         {test.unit || '—'}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground font-mono">
+                      <TableCell className="py-3.5 px-4 text-xs text-muted-foreground font-mono">
                         {test.referenceRange ? test.referenceRange : '—'}
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-[10px] font-mono rounded-full border-zinc-200 dark:border-zinc-800">
+                      <TableCell className="py-3.5 px-4">
+                        <Badge variant="outline" className="text-xs font-mono rounded-full border-zinc-200 dark:border-zinc-800">
                           {test.category}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right pr-6">
+                      <TableCell className="py-3.5 px-4 text-right pr-6">
                         {test.isAbnormal ? (
-                          <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
+                          <Badge variant="destructive" className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
                             <AlertTriangle className="h-3 w-3 mr-1" /> Abnormal
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none">
+                          <Badge variant="secondary" className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none">
                             <CheckCircle2 className="h-3 w-3 mr-1" /> Normal
                           </Badge>
                         )}

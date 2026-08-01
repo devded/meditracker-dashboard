@@ -209,7 +209,7 @@ function HistoryContent() {
         </div>
       </div>
 
-      {/* Main Tabs Navigation matching pure OLED dark styling */}
+      {/* Main Tabs Navigation */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val)}>
         <TabsList className="w-full justify-start bg-zinc-100 dark:bg-zinc-900 p-1.5 h-auto flex-wrap gap-1 rounded-2xl border border-zinc-200/60 dark:border-zinc-800">
           {PANELS.map((panel) => (
@@ -302,7 +302,7 @@ function HistoryContent() {
             </Card>
 
             {/* Section 2: Historical Accordion Table */}
-            <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+            <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
               <div className="p-6 border-b border-zinc-100 dark:border-zinc-800">
                 <h3 className="text-base font-bold text-foreground">{panel.historyTitle}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
@@ -352,16 +352,16 @@ function HistoryContent() {
                             <Table>
                               <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                                 <TableRow>
-                                  <TableHead className="text-xs font-semibold">Parameter</TableHead>
-                                  <TableHead className="text-xs font-semibold">Observed Value</TableHead>
-                                  <TableHead className="text-xs font-semibold">Reference Range</TableHead>
-                                  <TableHead className="text-right text-xs font-semibold pr-6">Status</TableHead>
+                                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Parameter</TableHead>
+                                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Observed Value</TableHead>
+                                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Reference Range</TableHead>
+                                  <TableHead className="py-3.5 px-4 text-right text-xs font-bold uppercase tracking-wider pr-6 text-muted-foreground">Status</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
                                 {panelTests.map((test) => (
                                   <TableRow key={test.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60">
-                                    <TableCell className="font-bold text-xs text-foreground">
+                                    <TableCell className="py-3.5 px-4 font-bold text-sm text-foreground">
                                       <div className="flex items-center gap-1.5">
                                         <span>{test.name}</span>
                                         <Tooltip>
@@ -376,21 +376,21 @@ function HistoryContent() {
                                         </Tooltip>
                                       </div>
                                     </TableCell>
-                                    <TableCell className="font-mono font-bold text-xs text-foreground">
+                                    <TableCell className="py-3.5 px-4 font-mono font-extrabold text-base text-foreground">
                                       {test.rawValue} {test.unit}
                                     </TableCell>
-                                    <TableCell className="font-mono text-xs text-muted-foreground">
+                                    <TableCell className="py-3.5 px-4 font-mono text-xs text-muted-foreground">
                                       {test.referenceRange || 'Standard'}
                                     </TableCell>
-                                    <TableCell className="text-right pr-6">
+                                    <TableCell className="py-3.5 px-4 text-right pr-6">
                                       {test.isAbnormal ? (
-                                        <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
+                                        <Badge variant="destructive" className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
                                           <AlertTriangle className="h-3 w-3 mr-1" /> Flagged
                                         </Badge>
                                       ) : (
                                         <Badge
                                           variant="secondary"
-                                          className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none"
+                                          className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none"
                                         >
                                           <CheckCircle2 className="h-3 w-3 mr-1" /> Normal
                                         </Badge>

@@ -203,7 +203,7 @@ function ReportsContent() {
         </div>
       </Card>
 
-      {/* Date-Grouped Reports List with Ultra-Sleek Dense Cards */}
+      {/* Date-Grouped Reports List */}
       {loading ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -232,10 +232,10 @@ function ReportsContent() {
         <div className="space-y-3">
           {groupedReports.map((group) => (
             <div key={group.dateKey} className="space-y-1">
-              {/* Sleek Minimal Date Banner */}
+              {/* Minimal Date Header */}
               <div className="flex items-center gap-1.5 px-1 py-0.5">
                 <Calendar className="size-3 text-emerald-500" />
-                <span className="text-[11px] font-extrabold text-foreground font-mono">
+                <span className="text-xs font-extrabold text-foreground font-mono">
                   {group.formattedDate}
                 </span>
                 <span className="text-[10px] text-muted-foreground font-mono">
@@ -243,7 +243,7 @@ function ReportsContent() {
                 </span>
               </div>
 
-              {/* Tightly Stacked Ultra-Compact Card Rows */}
+              {/* Tightly Stacked Card Rows */}
               <div className="space-y-1">
                 {group.items.map((report) => {
                   const abnormalTests = report.tests.filter((t) => t.isAbnormal);
@@ -282,7 +282,7 @@ function ReportsContent() {
                         <div className="flex items-center gap-1 shrink-0">
                           <button
                             onClick={() => toggleReportExpand(report.id)}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 h-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-semibold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 h-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-semibold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
                           >
                             {isExpanded ? (
                               <>
@@ -316,19 +316,19 @@ function ReportsContent() {
                         </div>
                       </div>
 
-                      {/* Expanded Section */}
+                      {/* Expanded Section with Generous Readable Table Padding & Font */}
                       {isExpanded && (
-                        <div className="p-3 space-y-2 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
+                        <div className="p-4 space-y-3 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
                           {/* Extra Report Metadata Strip */}
-                          <div className="p-2 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-[11px]">
-                            <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                              <Building2 className="size-3.5 text-emerald-500 shrink-0" />
+                          <div className="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                            <div className="flex items-center gap-2 font-semibold text-foreground">
+                              <Building2 className="size-4 text-emerald-500 shrink-0" />
                               <span>{report.labName}</span>
                             </div>
 
-                            <div className="flex items-center gap-2 text-muted-foreground font-medium flex-wrap">
+                            <div className="flex items-center gap-3 text-muted-foreground font-medium flex-wrap">
                               <span className="flex items-center gap-1 text-foreground">
-                                <User className="size-3 text-muted-foreground" /> {report.doctorName}
+                                <User className="size-3.5 text-muted-foreground" /> {report.doctorName}
                               </span>
                               <span>•</span>
                               <span className="font-mono">Patient: <strong className="text-foreground">{report.patientName}</strong> ({report.patientId})</span>
@@ -337,51 +337,51 @@ function ReportsContent() {
 
                           {/* Clinical Observation Note */}
                           {report.clinicalSummary && (
-                            <div className="p-2 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 text-[11px] leading-normal space-y-0.5">
-                              <span className="font-bold text-foreground font-mono text-[10px] uppercase tracking-wider flex items-center gap-1">
-                                <Stethoscope className="size-3 text-emerald-500" /> Summary:
+                            <div className="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
+                              <span className="font-bold text-foreground font-mono text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                                <Stethoscope className="size-3.5 text-emerald-500" /> Summary:
                               </span>
-                              <p className="text-muted-foreground pl-4">{report.clinicalSummary}</p>
+                              <p className="text-muted-foreground pl-5">{report.clinicalSummary}</p>
                             </div>
                           )}
 
-                          {/* Extracted Test Values Table */}
-                          <div className="overflow-x-auto rounded-lg border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-                            <table className="w-full text-left text-[11px]">
+                          {/* Extracted Test Values Table - Generous Padding & Readable Font */}
+                          <div className="overflow-x-auto rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+                            <table className="w-full text-left text-xs">
                               <thead>
-                                <tr className="border-b border-zinc-200/60 dark:border-zinc-800 text-muted-foreground font-semibold bg-zinc-50/80 dark:bg-zinc-900">
-                                  <th className="py-1 px-2.5">Test Parameter</th>
-                                  <th className="py-1 px-2.5">Category</th>
-                                  <th className="py-1 px-2.5">Observed Value</th>
-                                  <th className="py-1 px-2.5">Reference Range</th>
-                                  <th className="py-1 px-2.5 text-right">Status</th>
+                                <tr className="border-b border-zinc-200/60 dark:border-zinc-800 text-muted-foreground font-bold uppercase tracking-wider bg-zinc-50 dark:bg-zinc-900 text-[11px]">
+                                  <th className="py-3 px-4">Test Parameter</th>
+                                  <th className="py-3 px-4">Category</th>
+                                  <th className="py-3 px-4">Observed Value</th>
+                                  <th className="py-3 px-4">Reference Range</th>
+                                  <th className="py-3 px-4 text-right">Status</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-medium">
                                 {report.tests.map((t, idx) => (
                                   <tr key={idx} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
-                                    <td className="py-1 px-2.5 font-bold text-foreground">
+                                    <td className="py-3.5 px-4 font-bold text-sm text-foreground">
                                       {t.name}
                                     </td>
-                                    <td className="py-1 px-2.5 text-muted-foreground font-mono text-[10px]">
+                                    <td className="py-3.5 px-4 text-muted-foreground font-mono text-xs">
                                       {t.category}
                                     </td>
-                                    <td className="py-1 px-2.5 font-mono font-extrabold text-xs">
+                                    <td className="py-3.5 px-4 font-mono font-extrabold text-base">
                                       <span className={t.isAbnormal ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}>
-                                        {t.rawValue} <span className="text-[10px] font-normal text-muted-foreground">{t.unit}</span>
+                                        {t.rawValue} <span className="text-xs font-normal text-muted-foreground">{t.unit}</span>
                                       </span>
                                     </td>
-                                    <td className="py-1 px-2.5 font-mono text-muted-foreground text-[10px]">
+                                    <td className="py-3.5 px-4 font-mono text-muted-foreground text-xs">
                                       {t.referenceRange || 'Standard'}
                                     </td>
-                                    <td className="py-1 px-2.5 text-right">
+                                    <td className="py-3.5 px-4 text-right">
                                       {t.isAbnormal ? (
-                                        <span className="inline-flex items-center gap-1 font-mono text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
-                                          <AlertTriangle className="size-2.5" /> Flagged
+                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
+                                          <AlertTriangle className="size-3" /> Flagged
                                         </span>
                                       ) : (
-                                        <span className="inline-flex items-center gap-1 font-mono text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
-                                          <CheckCircle2 className="size-2.5" /> Normal
+                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                                          <CheckCircle2 className="size-3" /> Normal
                                         </span>
                                       )}
                                     </td>
