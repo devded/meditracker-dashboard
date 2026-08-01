@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceArea } from 'rec
 import { Report } from '@/types';
 import { parseReferenceRange } from '@/utils/parse-reference-range';
 import { toast } from 'sonner';
+import { Layers, ShieldCheck } from 'lucide-react';
 
 interface BiomarkerComparisonRangeChartProps {
   reports: Report[];
@@ -81,11 +82,14 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
   }, [reports]);
 
   return (
-    <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-xs">
-      <div>
-        <h3 className="text-base font-bold text-foreground font-sans">Biomarker comparison</h3>
+    <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-xs rounded-3xl">
+      <div className="pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center gap-2">
+          <Layers className="size-4 text-emerald-600 dark:text-emerald-400" />
+          <h3 className="text-base font-bold text-foreground font-sans">Biomarker Range Comparison</h3>
+        </div>
         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-          Each marker shown as a share of its own reference range, so different units share one axis. The green band is 0–100% — inside range.
+          Normalized multi-series view (% of reference range). Shaded green band (0–100%) represents optimal physiological bounds.
         </p>
       </div>
 
@@ -99,13 +103,13 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
               onClick={() => toggleSeries(bm.name)}
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium font-mono transition-all border ${
                 active
-                  ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-foreground font-bold shadow-2xs'
-                  : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800 text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800'
+                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 border-slate-900 dark:border-slate-100 font-bold shadow-2xs'
+                  : 'bg-slate-50/50 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-800 text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               <span
                 className="size-2 rounded-full shrink-0"
-                style={{ backgroundColor: active ? bm.color : '#94a3b8' }}
+                style={{ backgroundColor: active ? (bm.color) : '#94a3b8' }}
               />
               <span>{bm.name}</span>
             </button>
@@ -186,9 +190,11 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
         </ChartContainer>
       </div>
 
-      <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
-        <span>Showing {selectedSeries.length} of max 5 series.</span>
-        <span>0% = range floor · 100% = range ceiling</span>
+      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground">
+        <span>Showing {selectedSeries.length} of max 5 active series.</span>
+        <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+          <ShieldCheck className="size-3.5" /> Green Band (0%–100%) = Normal Clinical Reference
+        </span>
       </div>
     </Card>
   );
