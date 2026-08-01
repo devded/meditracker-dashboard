@@ -128,41 +128,41 @@ function ReportsContent() {
   };
 
   return (
-    <div className="space-y-3 pb-8">
+    <div className="space-y-6 pb-12">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
-            Diagnostic Lab Reports <FileText className="h-4 w-4 text-emerald-500" />
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
+            Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-500" />
           </h1>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Lab reports grouped by date and categorized by test panel.
+          <p className="text-xs text-muted-foreground mt-1">
+            Lab reports grouped by date and categorized by test panel. Click any report row to expand details.
           </p>
         </div>
-        <Button onClick={() => setUploadOpen(true)} className="gap-1.5 shadow-xs bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold rounded-xl h-8 px-3">
-          <Plus className="h-3.5 w-3.5" /> Upload New Report
+        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold rounded-xl h-9 px-4">
+          <Plus className="h-4 w-4" /> Upload New Report
         </Button>
       </div>
 
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
 
-      {/* Filter Controls Card - Ultra Compact */}
-      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-2xs rounded-2xl p-2.5">
-        <div className="flex flex-col md:flex-row gap-2">
+      {/* Filter Controls Card - Harmonized Design */}
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-2xl p-3.5">
+        <div className="flex flex-col md:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search test panel category, physician, lab..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 text-xs h-8 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+              className="pl-9 text-xs h-9 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
             />
           </div>
 
           {/* Lab Filter */}
           <Select value={selectedLab} onValueChange={(val) => setSelectedLab(val || 'all')}>
-            <SelectTrigger className="w-full md:w-[180px] h-8 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            <SelectTrigger className="w-full md:w-[190px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
               <SelectValue placeholder="All Diagnostic Labs" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -177,7 +177,7 @@ function ReportsContent() {
 
           {/* Doctor Filter */}
           <Select value={selectedDoctor} onValueChange={(val) => setSelectedDoctor(val || 'all')}>
-            <SelectTrigger className="w-full md:w-[180px] h-8 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+            <SelectTrigger className="w-full md:w-[190px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
               <SelectValue placeholder="All Physicians" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -195,9 +195,9 @@ function ReportsContent() {
             variant={filterAbnormalOnly ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilterAbnormalOnly((prev) => !prev)}
-            className="h-8 text-xs gap-1 shrink-0 rounded-xl font-semibold px-3"
+            className="h-9 text-xs gap-1.5 shrink-0 rounded-xl font-semibold px-3.5"
           >
-            <AlertTriangle className="h-3 w-3" />
+            <AlertTriangle className="h-3.5 w-3.5" />
             {filterAbnormalOnly ? 'Abnormal Only' : 'Filter Abnormal'}
           </Button>
         </div>
@@ -205,19 +205,19 @@ function ReportsContent() {
 
       {/* Date-Grouped Reports List */}
       {loading ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-12 w-full rounded-xl" />
+            <Skeleton key={i} className="h-16 w-full rounded-2xl" />
           ))}
         </div>
       ) : filteredReports.length === 0 ? (
-        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 text-center space-y-2 rounded-2xl">
-          <FileText className="h-7 w-7 text-muted-foreground mx-auto" />
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-8 text-center space-y-3 rounded-2xl">
+          <FileText className="h-8 w-8 text-muted-foreground mx-auto" />
           <p className="font-bold text-xs text-foreground">No lab reports match your search query.</p>
           <Button
             variant="outline"
             size="sm"
-            className="rounded-xl text-xs h-7 px-3"
+            className="rounded-xl text-xs h-8 px-3.5"
             onClick={() => {
               setSearchQuery('');
               setSelectedLab('all');
@@ -229,22 +229,26 @@ function ReportsContent() {
           </Button>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-6">
           {groupedReports.map((group) => (
-            <div key={group.dateKey} className="space-y-1">
-              {/* Minimal Date Header */}
-              <div className="flex items-center gap-1.5 px-1 py-0.5">
-                <Calendar className="size-3 text-emerald-500" />
-                <span className="text-xs font-extrabold text-foreground font-mono">
-                  {group.formattedDate}
-                </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  ({group.items.length} {group.items.length === 1 ? 'panel' : 'panels'})
-                </span>
+            <div key={group.dateKey} className="space-y-2.5">
+              {/* Harmonized Date Section Banner */}
+              <div className="flex items-center gap-2.5 px-1 py-1">
+                <div className="size-7 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
+                  <Calendar className="size-3.5" />
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <h2 className="text-sm font-extrabold text-foreground font-mono tracking-tight">
+                    {group.formattedDate}
+                  </h2>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    ({group.items.length} {group.items.length === 1 ? 'panel' : 'panels'})
+                  </span>
+                </div>
               </div>
 
-              {/* Tightly Stacked Card Rows */}
-              <div className="space-y-1">
+              {/* Synchronized Card Rows */}
+              <div className="space-y-2.5">
                 {group.items.map((report) => {
                   const abnormalTests = report.tests.filter((t) => t.isAbnormal);
                   const isExpanded = expandedReports[report.id] ?? false;
@@ -253,81 +257,81 @@ function ReportsContent() {
                   return (
                     <Card
                       key={report.id}
-                      className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-2xs overflow-hidden rounded-xl p-0 transition-all"
+                      className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs overflow-hidden rounded-2xl p-0 transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
                     >
-                      {/* Tight Bar Row (Min Height 38px) */}
-                      <div className="px-3 py-1.5 flex items-center justify-between gap-2 min-h-[38px] bg-white dark:bg-zinc-950">
-                        <div className="flex items-center gap-2 flex-wrap min-w-0">
-                          <span className="font-bold text-xs text-foreground flex items-center gap-1.5 truncate">
-                            <Layers className="size-3.5 text-emerald-500 shrink-0" />
+                      {/* Synchronized Header Bar Row */}
+                      <div className="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-zinc-950">
+                        <div className="flex items-center gap-3 flex-wrap min-w-0">
+                          <span className="font-bold text-sm text-foreground flex items-center gap-2 truncate">
+                            <Layers className="size-4 text-emerald-500 shrink-0" />
                             {categoryTitle}
                           </span>
 
                           {abnormalTests.length > 0 ? (
-                            <Badge variant="destructive" className="font-mono text-[9px] font-bold px-2 py-0 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none shrink-0">
-                              <AlertTriangle className="size-2.5 mr-0.5 inline" /> {abnormalTests.length} Flagged
+                            <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none shrink-0">
+                              <AlertTriangle className="size-3 mr-1 inline" /> {abnormalTests.length} Flagged
                             </Badge>
                           ) : (
-                            <Badge variant="secondary" className="font-mono text-[9px] font-bold px-2 py-0 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none shrink-0">
-                              <CheckCircle2 className="size-2.5 mr-0.5 inline" /> Normal
+                            <Badge variant="secondary" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none shrink-0">
+                              <CheckCircle2 className="size-3 mr-1 inline" /> Normal
                             </Badge>
                           )}
 
-                          <span className="text-[10px] font-mono text-muted-foreground border-l border-zinc-200 dark:border-zinc-800 pl-2 shrink-0">
-                            {report.tests.length} tests
+                          <span className="text-xs font-mono font-medium text-muted-foreground border-l border-zinc-200 dark:border-zinc-800 pl-3 shrink-0">
+                            {report.tests.length} Biomarkers
                           </span>
                         </div>
 
-                        {/* Ultra Compact Actions */}
-                        <div className="flex items-center gap-1 shrink-0">
+                        {/* Synchronized Action Buttons */}
+                        <div className="flex items-center gap-1.5 shrink-0">
                           <button
                             onClick={() => toggleReportExpand(report.id)}
-                            className="inline-flex items-center gap-1 px-2.5 py-0.5 h-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-semibold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 h-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-semibold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
                           >
                             {isExpanded ? (
                               <>
-                                <span>Hide</span>
-                                <ChevronUp className="size-3" />
+                                <span>Hide Details</span>
+                                <ChevronUp className="size-3.5" />
                               </>
                             ) : (
                               <>
                                 <span>Show Values ({report.tests.length})</span>
-                                <ChevronDown className="size-3" />
+                                <ChevronDown className="size-3.5" />
                               </>
                             )}
                           </button>
 
                           <Link href={`/reports/${report.id}`}>
                             <button
-                              className="size-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
+                              className="size-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
                               title="Full Page Inspection"
                             >
-                              <Eye className="size-3 text-emerald-500" />
+                              <Eye className="size-3.5 text-emerald-500" />
                             </button>
                           </Link>
 
                           <button
                             onClick={() => handleNoOpAction('Download PDF', report.id)}
-                            className="size-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
+                            className="size-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
                             title="Download PDF"
                           >
-                            <Download className="size-3" />
+                            <Download className="size-3.5" />
                           </button>
                         </div>
                       </div>
 
-                      {/* Expanded Section with Generous Readable Table Padding & Font */}
+                      {/* Expanded Details Section */}
                       {isExpanded && (
-                        <div className="p-4 space-y-3 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
-                          {/* Extra Report Metadata Strip */}
-                          <div className="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                        <div className="p-4 space-y-4 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
+                          {/* Extra Diagnostic Metadata Strip */}
+                          <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                             <div className="flex items-center gap-2 font-semibold text-foreground">
                               <Building2 className="size-4 text-emerald-500 shrink-0" />
                               <span>{report.labName}</span>
                             </div>
 
                             <div className="flex items-center gap-3 text-muted-foreground font-medium flex-wrap">
-                              <span className="flex items-center gap-1 text-foreground">
+                              <span className="flex items-center gap-1.5 text-foreground">
                                 <User className="size-3.5 text-muted-foreground" /> {report.doctorName}
                               </span>
                               <span>•</span>
@@ -337,51 +341,51 @@ function ReportsContent() {
 
                           {/* Clinical Observation Note */}
                           {report.clinicalSummary && (
-                            <div className="p-3 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
-                              <span className="font-bold text-foreground font-mono text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                                <Stethoscope className="size-3.5 text-emerald-500" /> Summary:
+                            <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
+                              <span className="font-bold text-foreground font-mono text-[11px] uppercase tracking-wider flex items-center gap-2">
+                                <Stethoscope className="size-4 text-emerald-500" /> Clinical Observation Summary:
                               </span>
-                              <p className="text-muted-foreground pl-5">{report.clinicalSummary}</p>
+                              <p className="text-muted-foreground pl-6">{report.clinicalSummary}</p>
                             </div>
                           )}
 
-                          {/* Extracted Test Values Table - Generous Padding & Readable Font */}
+                          {/* Extracted Test Values Table - Harmonized Dimensions & Typography */}
                           <div className="overflow-x-auto rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                             <table className="w-full text-left text-xs">
                               <thead>
                                 <tr className="border-b border-zinc-200/60 dark:border-zinc-800 text-muted-foreground font-bold uppercase tracking-wider bg-zinc-50 dark:bg-zinc-900 text-[11px]">
-                                  <th className="py-3 px-4">Test Parameter</th>
-                                  <th className="py-3 px-4">Category</th>
-                                  <th className="py-3 px-4">Observed Value</th>
-                                  <th className="py-3 px-4">Reference Range</th>
-                                  <th className="py-3 px-4 text-right">Status</th>
+                                  <th className="py-2.5 px-4">Test Parameter</th>
+                                  <th className="py-2.5 px-4">Category</th>
+                                  <th className="py-2.5 px-4">Observed Value</th>
+                                  <th className="py-2.5 px-4">Reference Range</th>
+                                  <th className="py-2.5 px-4 text-right">Status</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-medium">
                                 {report.tests.map((t, idx) => (
                                   <tr key={idx} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
-                                    <td className="py-3.5 px-4 font-bold text-sm text-foreground">
+                                    <td className="py-2.5 px-4 font-bold text-xs sm:text-sm text-foreground">
                                       {t.name}
                                     </td>
-                                    <td className="py-3.5 px-4 text-muted-foreground font-mono text-xs">
+                                    <td className="py-2.5 px-4 text-muted-foreground font-mono text-xs">
                                       {t.category}
                                     </td>
-                                    <td className="py-3.5 px-4 font-mono font-extrabold text-base">
+                                    <td className="py-2.5 px-4 font-mono font-extrabold text-sm sm:text-base">
                                       <span className={t.isAbnormal ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}>
                                         {t.rawValue} <span className="text-xs font-normal text-muted-foreground">{t.unit}</span>
                                       </span>
                                     </td>
-                                    <td className="py-3.5 px-4 font-mono text-muted-foreground text-xs">
+                                    <td className="py-2.5 px-4 font-mono text-muted-foreground text-xs">
                                       {t.referenceRange || 'Standard'}
                                     </td>
-                                    <td className="py-3.5 px-4 text-right">
+                                    <td className="py-2.5 px-4 text-right">
                                       {t.isAbnormal ? (
-                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
+                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
                                           <AlertTriangle className="size-3" /> Flagged
                                         </span>
                                       ) : (
-                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
-                                          <CheckCircle2 className="size-3" /> Normal
+                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                                          <CheckCircle2 className="size-3" /> Optimal
                                         </span>
                                       )}
                                     </td>
