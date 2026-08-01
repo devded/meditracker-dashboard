@@ -4,35 +4,56 @@ import * as React from 'react';
 import { PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { SearchDialog } from '@/components/search-dialog';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Sidebar } from './sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-export function Header() {
+interface HeaderProps {
+  onToggleSidebar?: () => void;
+}
+
+export function Header({ onToggleSidebar }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleToggle = () => {
+    if (onToggleSidebar) {
+      onToggleSidebar();
+    }
+  };
 
   return (
     <header className="h-16 border-b border-border/60 bg-background/95 backdrop-blur-xs sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between">
-      {/* Left: Sidebar Toggle & Search Input */}
+      {/* Left: Sidebar Expand/Collapse Toggle Button */}
       <div className="flex items-center gap-3">
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger
-            render={
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl border border-border/50">
-                <PanelLeft className="h-4 w-4 text-muted-foreground" />
-                <span className="sr-only">Toggle sidebar</span>
-              </Button>
-            }
-          />
-          <SheetContent side="left" className="p-0 w-64 border-r">
-            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            <Sidebar onNavClick={() => setMobileOpen(false)} />
-          </SheetContent>
-        </Sheet>
+        {/* Desktop Sidebar Toggle Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleToggle}
+          className="hidden md:flex h-9 w-9 rounded-xl border border-border/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          title="Expand / Collapse Sidebar"
+        >
+          <PanelLeft className="h-4 w-4 text-muted-foreground" />
+          <span className="sr-only">Toggle sidebar</span>
+        </Button>
 
-        {/* Global Search Bar */}
-        <SearchDialog />
+        {/* Mobile Drawer Trigger */}
+        <div className="md:hidden">
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger
+              render={
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl border border-border/50">
+                  <PanelLeft className="h-4 w-4 text-muted-foreground" />
+                  <span className="sr-only">Toggle mobile sidebar</span>
+                </Button>
+              }
+            />
+            <SheetContent side="left" className="p-0 w-64 border-r">
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <Sidebar onNavClick={() => setMobileOpen(false)} />
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
 
       {/* Right: Actions */}
