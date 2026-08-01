@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getReports } from '@/services/report-service';
 import { Report, Test } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -183,7 +183,7 @@ function HistoryContent() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
-            Biomarker History <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            Biomarker History <TrendingUp className="h-5 w-5 text-emerald-500" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
             Longitudinal trend tracking & historical reference charts for vital clinical parameters.
@@ -192,7 +192,7 @@ function HistoryContent() {
 
         <div className="flex items-center gap-2">
           <Select value={timeRange} onValueChange={(val) => setTimeRange(val || 'all')}>
-            <SelectTrigger className="w-[160px] h-9 text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <SelectTrigger className="w-[160px] h-9 text-xs font-semibold rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
               <Calendar className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
               <SelectValue placeholder="Select Range" />
             </SelectTrigger>
@@ -203,20 +203,20 @@ function HistoryContent() {
             </SelectContent>
           </Select>
 
-          <Button size="sm" onClick={handleExport} className="h-9 rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold shadow-xs gap-1.5 px-3.5">
+          <Button size="sm" onClick={handleExport} className="h-9 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold shadow-xs gap-1.5 px-3.5">
             <Download className="h-3.5 w-3.5" /> Export
           </Button>
         </div>
       </div>
 
-      {/* Main Tabs Navigation matching shadcnspace styling */}
+      {/* Main Tabs Navigation matching pure OLED dark styling */}
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val)}>
-        <TabsList className="w-full justify-start bg-slate-100/80 dark:bg-slate-800/60 p-1.5 h-auto flex-wrap gap-1 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+        <TabsList className="w-full justify-start bg-zinc-100 dark:bg-zinc-900 p-1.5 h-auto flex-wrap gap-1 rounded-2xl border border-zinc-200/60 dark:border-zinc-800">
           {PANELS.map((panel) => (
             <TabsTrigger
               key={panel.id}
               value={panel.id}
-              className="text-xs px-4 py-2 rounded-xl font-semibold transition-all data-[state=active]:bg-slate-900 data-[state=active]:text-white dark:data-[state=active]:bg-slate-100 dark:data-[state=active]:text-slate-900 data-[state=active]:shadow-xs text-slate-600 dark:text-slate-400"
+              className="text-xs px-4 py-2 rounded-xl font-semibold transition-all data-[state=active]:bg-zinc-900 data-[state=active]:text-white dark:data-[state=active]:bg-zinc-100 dark:data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs text-zinc-600 dark:text-zinc-400"
             >
               {panel.label}
             </TabsTrigger>
@@ -226,11 +226,11 @@ function HistoryContent() {
         {PANELS.map((panel) => (
           <TabsContent key={panel.id} value={panel.id} className="space-y-6 mt-6">
             {/* Section 1: Multi-Line Comparative Trend Chart */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 space-y-4 shadow-xs rounded-3xl">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100 dark:border-slate-800">
+            <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-4 shadow-xs rounded-3xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
                 <div>
                   <h3 className="text-base font-bold text-foreground font-sans flex items-center gap-2">
-                    {panel.title} <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    {panel.title} <Activity className="h-4 w-4 text-emerald-500" />
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Track your {panel.label.toLowerCase()} parameters across historical lab visits
@@ -250,7 +250,7 @@ function HistoryContent() {
               <div className="h-[280px] w-full pt-2">
                 <ChartContainer config={chartConfig} className="h-full w-full">
                   <LineChart data={chartData} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-200/60 dark:stroke-slate-800" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-zinc-200/60 dark:stroke-zinc-800/60" />
                     <XAxis
                       dataKey="date"
                       tickLine={false}
@@ -302,8 +302,8 @@ function HistoryContent() {
             </Card>
 
             {/* Section 2: Historical Accordion Table */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs rounded-3xl overflow-hidden">
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+            <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+              <div className="p-6 border-b border-zinc-100 dark:border-zinc-800">
                 <h3 className="text-base font-bold text-foreground">{panel.historyTitle}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   Historical values and reference ranges for {panel.label.toLowerCase()} parameters
@@ -320,8 +320,8 @@ function HistoryContent() {
                     if (panelTests.length === 0) return null;
 
                     return (
-                      <AccordionItem key={report.id} value={report.id} className="border-b border-slate-100 dark:border-slate-800">
-                        <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                      <AccordionItem key={report.id} value={report.id} className="border-b border-zinc-100 dark:border-zinc-800">
+                        <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full pr-4 gap-3 text-left">
                             <div>
                               <span className="font-mono font-bold text-sm text-foreground block">
@@ -347,10 +347,10 @@ function HistoryContent() {
                           </div>
                         </AccordionTrigger>
 
-                        <AccordionContent className="px-6 pb-5 pt-1 bg-slate-50/50 dark:bg-slate-900/50">
-                          <div className="overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900">
+                        <AccordionContent className="px-6 pb-5 pt-1 bg-zinc-50/50 dark:bg-zinc-900/50">
+                          <div className="overflow-x-auto rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                             <Table>
-                              <TableHeader className="bg-slate-50 dark:bg-slate-800/40">
+                              <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                                 <TableRow>
                                   <TableHead className="text-xs font-semibold">Parameter</TableHead>
                                   <TableHead className="text-xs font-semibold">Observed Value</TableHead>
@@ -360,14 +360,14 @@ function HistoryContent() {
                               </TableHeader>
                               <TableBody>
                                 {panelTests.map((test) => (
-                                  <TableRow key={test.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
+                                  <TableRow key={test.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60">
                                     <TableCell className="font-bold text-xs text-foreground">
                                       <div className="flex items-center gap-1.5">
                                         <span>{test.name}</span>
                                         <Tooltip>
                                           <TooltipTrigger
                                             render={
-                                              <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-primary cursor-pointer" />
+                                              <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-emerald-500 cursor-pointer" />
                                             }
                                           />
                                           <TooltipContent className="text-xs max-w-[220px]">

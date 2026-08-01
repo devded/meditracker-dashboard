@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getReportById } from '@/services/report-service';
-import { Report, Test } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Report } from '@/types';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -22,16 +22,13 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
   ArrowLeft,
-  FileText,
   Search,
   Download,
   Stethoscope,
   Building2,
   Calendar,
-  User,
   CheckCircle2,
   AlertTriangle,
-  Layers,
   ArrowUpDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -171,18 +168,18 @@ export default function ReportDetailPage() {
         <Button variant="ghost" size="sm" onClick={() => router.push('/reports')} className="gap-1.5 text-xs rounded-xl font-semibold">
           <ArrowLeft className="h-4 w-4" /> Back to Reports List
         </Button>
-        <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-bold px-3.5 h-9">
+        <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
           <Download className="h-3.5 w-3.5" /> Export CSV Data
         </Button>
       </div>
 
       {/* Patient & Report Banner Card */}
-      <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <Building2 className="h-5 w-5 text-emerald-500" />
                 <h1 className="text-xl font-extrabold text-foreground font-sans">{report.labName}</h1>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -190,8 +187,8 @@ export default function ReportDetailPage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="font-mono text-xs rounded-full border-slate-200 dark:border-slate-800 text-foreground px-3 py-1">
-                <Calendar className="h-3 w-3 mr-1.5 text-emerald-600 dark:text-emerald-400" /> {report.formattedDate}
+              <Badge variant="outline" className="font-mono text-xs rounded-full border-zinc-200 dark:border-zinc-800 text-foreground px-3 py-1">
+                <Calendar className="h-3 w-3 mr-1.5 text-emerald-500" /> {report.formattedDate}
               </Badge>
               <Badge variant="secondary" className="font-mono text-xs rounded-full px-3 py-1">
                 ID: {report.patientId}
@@ -202,7 +199,7 @@ export default function ReportDetailPage() {
 
         <CardContent className="p-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
               <p className="text-[11px] text-muted-foreground uppercase font-mono font-semibold">Patient Name</p>
               <p className="text-base font-extrabold font-mono text-foreground mt-0.5">{report.patientName}</p>
             </div>
@@ -214,7 +211,7 @@ export default function ReportDetailPage() {
               <p className="text-[11px] text-rose-600 dark:text-rose-400 uppercase font-mono font-semibold">Abnormal Flags</p>
               <p className="text-xl font-extrabold font-mono text-rose-600 dark:text-rose-400 mt-0.5">{abnormalCount}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <p className="text-[11px] text-muted-foreground uppercase font-mono font-semibold">Total Panel Tests</p>
               <p className="text-xl font-extrabold font-mono text-foreground mt-0.5">{report.tests.length}</p>
             </div>
@@ -222,9 +219,9 @@ export default function ReportDetailPage() {
 
           {/* Clinical Summary */}
           {report.clinicalSummary && (
-            <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/40 p-4 border border-slate-100 dark:border-slate-800 space-y-1">
+            <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 p-4 border border-zinc-100 dark:border-zinc-800 space-y-1">
               <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                <Stethoscope className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <Stethoscope className="h-4 w-4 text-emerald-500" />
                 <span>Clinical Summary & Observations</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -238,7 +235,7 @@ export default function ReportDetailPage() {
       {/* Per-Report Charts */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Normal vs Abnormal Chart */}
-        <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 space-y-2 shadow-xs rounded-3xl">
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-2 shadow-xs rounded-3xl">
           <div>
             <h3 className="text-sm font-bold text-foreground">Test Status Distribution</h3>
             <p className="text-xs text-muted-foreground">Normal range vs abnormal flag ratio</p>
@@ -258,7 +255,7 @@ export default function ReportDetailPage() {
         </Card>
 
         {/* Category Breakdown Chart */}
-        <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 space-y-2 shadow-xs rounded-3xl">
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-2 shadow-xs rounded-3xl">
           <div>
             <h3 className="text-sm font-bold text-foreground">Category Breakdown</h3>
             <p className="text-xs text-muted-foreground">Biomarkers grouped by medical specialty</p>
@@ -266,7 +263,7 @@ export default function ReportDetailPage() {
           <div className="h-[200px] w-full pt-2">
             <ChartContainer config={chartConfig} className="h-full w-full">
               <BarChart data={categoryBreakdown} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-200/60 dark:stroke-slate-800" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-zinc-200/60 dark:stroke-zinc-800/60" />
                 <XAxis dataKey="category" tickLine={false} axisLine={false} className="text-[10px] text-muted-foreground font-mono" />
                 <YAxis tickLine={false} axisLine={false} className="text-[10px] text-muted-foreground font-mono" />
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -278,8 +275,8 @@ export default function ReportDetailPage() {
       </div>
 
       {/* Tests Data Table */}
-      <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-bold text-foreground">Individual Test Results</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -294,12 +291,12 @@ export default function ReportDetailPage() {
                 placeholder="Filter test name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 text-xs h-9 w-[180px] rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40"
+                className="pl-8 text-xs h-9 w-[180px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
               />
             </div>
 
             <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val || 'all')}>
-              <SelectTrigger className="h-9 w-[140px] text-xs rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <SelectTrigger className="h-9 w-[140px] text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -327,7 +324,7 @@ export default function ReportDetailPage() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50 dark:bg-slate-800/40">
+              <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                 <TableRow>
                   <TableHead>
                     <Button variant="ghost" size="sm" onClick={() => toggleSort('name')} className="text-xs font-semibold p-0 h-auto gap-1">
@@ -358,7 +355,7 @@ export default function ReportDetailPage() {
                   </TableRow>
                 ) : (
                   filteredTests.map((test) => (
-                    <TableRow key={test.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                    <TableRow key={test.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
                       <TableCell className="font-bold text-xs text-foreground">
                         {test.name}
                       </TableCell>
@@ -372,7 +369,7 @@ export default function ReportDetailPage() {
                         {test.referenceRange ? test.referenceRange : '—'}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-[10px] font-mono rounded-full">
+                        <Badge variant="outline" className="text-[10px] font-mono rounded-full border-zinc-200 dark:border-zinc-800">
                           {test.category}
                         </Badge>
                       </TableCell>

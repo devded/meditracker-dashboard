@@ -24,7 +24,6 @@ import {
   User,
   ChevronDown,
   ChevronUp,
-  Activity,
   Layers,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -133,13 +132,13 @@ function ReportsContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
-            Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-500" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
             Lab reports grouped by date and categorized by test panel. Click any report to expand full test parameters and values.
           </p>
         </div>
-        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold rounded-xl h-10 px-4">
+        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold rounded-xl h-10 px-4">
           <Plus className="h-4 w-4" /> Upload New Report
         </Button>
       </div>
@@ -147,7 +146,7 @@ function ReportsContent() {
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
 
       {/* Filter Controls Card */}
-      <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl">
         <CardContent className="p-4 space-y-3">
           <div className="flex flex-col md:flex-row gap-3">
             {/* Search Input */}
@@ -157,13 +156,13 @@ function ReportsContent() {
                 placeholder="Search test panel category (e.g. Hematology, Hormone), physician, lab..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 text-xs h-9 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40"
+                className="pl-9 text-xs h-9 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
               />
             </div>
 
             {/* Lab Filter */}
             <Select value={selectedLab} onValueChange={(val) => setSelectedLab(val || 'all')}>
-              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                 <SelectValue placeholder="All Diagnostic Labs" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -178,7 +177,7 @@ function ReportsContent() {
 
             {/* Doctor Filter */}
             <Select value={selectedDoctor} onValueChange={(val) => setSelectedDoctor(val || 'all')}>
-              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                 <SelectValue placeholder="All Physicians" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -213,7 +212,7 @@ function ReportsContent() {
           ))}
         </div>
       ) : filteredReports.length === 0 ? (
-        <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-12 text-center space-y-3">
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-12 text-center space-y-3 rounded-3xl">
           <FileText className="h-10 w-10 text-muted-foreground mx-auto" />
           <p className="font-bold text-sm text-foreground">No lab reports match your search query.</p>
           <Button
@@ -236,7 +235,7 @@ function ReportsContent() {
             <div key={group.dateKey} className="space-y-4">
               {/* Date Group Section Banner */}
               <div className="flex items-center gap-3 px-2 pt-2">
-                <div className="size-8 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
+                <div className="size-8 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
                   <Calendar className="size-4" />
                 </div>
                 <div>
@@ -259,14 +258,14 @@ function ReportsContent() {
                   return (
                     <Card
                       key={report.id}
-                      className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden rounded-3xl transition-all"
+                      className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs overflow-hidden rounded-3xl transition-all"
                     >
                       {/* Report Header Row Focused on Test Category */}
-                      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900">
+                      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-950">
                         <div className="space-y-1.5 min-w-0">
                           <div className="flex items-center gap-2.5 flex-wrap">
                             <span className="font-extrabold text-base text-foreground flex items-center gap-2">
-                              <Layers className="size-4 text-emerald-600 dark:text-emerald-400" />
+                              <Layers className="size-4 text-emerald-500" />
                               {categoryTitle}
                             </span>
                             {abnormalTests.length > 0 ? (
@@ -299,7 +298,7 @@ function ReportsContent() {
                         <div className="flex items-center gap-2 shrink-0">
                           <button
                             onClick={() => toggleReportExpand(report.id)}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-semibold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
                           >
                             {isExpanded ? (
                               <>
@@ -316,16 +315,16 @@ function ReportsContent() {
 
                           <Link href={`/reports/${report.id}`}>
                             <button
-                              className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+                              className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
                               title="Full Page Inspection"
                             >
-                              <Eye className="size-4 text-primary" />
+                              <Eye className="size-4 text-emerald-500" />
                             </button>
                           </Link>
 
                           <button
                             onClick={() => handleNoOpAction('Download PDF', report.id)}
-                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+                            className="size-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
                             title="Download PDF"
                           >
                             <Download className="size-4" />
@@ -335,10 +334,10 @@ function ReportsContent() {
 
                       {/* Expanded Detailed Biomarker Table & Clinical Summary */}
                       {isExpanded && (
-                        <div className="p-5 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
+                        <div className="p-5 space-y-4 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
                           {/* Clinical Observation Note */}
                           {report.clinicalSummary && (
-                            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs leading-relaxed space-y-1">
+                            <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
                               <span className="font-bold text-foreground block font-mono text-[11px] uppercase tracking-wider">
                                 Clinical Observation Summary:
                               </span>
@@ -347,10 +346,10 @@ function ReportsContent() {
                           )}
 
                           {/* Extracted Test Values Grid Table */}
-                          <div className="overflow-x-auto rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+                          <div className="overflow-x-auto rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                             <table className="w-full text-left text-xs">
                               <thead>
-                                <tr className="border-b border-slate-200/60 dark:border-slate-800 text-muted-foreground font-semibold bg-slate-50/80 dark:bg-slate-800/40">
+                                <tr className="border-b border-zinc-200/60 dark:border-zinc-800 text-muted-foreground font-semibold bg-zinc-50/80 dark:bg-zinc-900">
                                   <th className="py-2.5 px-3">Test Parameter</th>
                                   <th className="py-2.5 px-3">Category</th>
                                   <th className="py-2.5 px-3">Observed Value</th>
@@ -358,9 +357,9 @@ function ReportsContent() {
                                   <th className="py-2.5 px-3 text-right">Status</th>
                                 </tr>
                               </thead>
-                              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60 font-medium">
                                 {report.tests.map((t, idx) => (
-                                  <tr key={idx} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                                  <tr key={idx} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
                                     <td className="py-2.5 px-3 font-bold text-foreground">
                                       {t.name}
                                     </td>
