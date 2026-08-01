@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   FileText,
   TrendingUp,
-  Sparkles,
   HeartPulse,
   PlusCircle,
 } from 'lucide-react';
@@ -41,12 +40,6 @@ export function Sidebar({ onNavClick }: SidebarProps) {
       href: '/history',
       icon: TrendingUp,
       active: pathname === '/history',
-    },
-    {
-      name: 'Health Insights',
-      href: '/insights',
-      icon: Sparkles,
-      active: pathname === '/insights',
     },
   ];
 
