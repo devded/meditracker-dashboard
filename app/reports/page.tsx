@@ -5,21 +5,29 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getReports } from '@/services/report-service';
 import { Report } from '@/types';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FileText, Search, Eye, Download, Trash2, ArrowUpDown, Plus, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
+import {
+  FileText,
+  Search,
+  Eye,
+  Download,
+  Trash2,
+  Plus,
+  CheckCircle2,
+  AlertTriangle,
+  Calendar,
+  Building2,
+  User,
+  ChevronDown,
+  ChevronUp,
+  Activity,
+  FileSpreadsheet,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
 
@@ -33,9 +41,10 @@ function ReportsContent() {
   const [selectedLab, setSelectedLab] = React.useState<string>('all');
   const [selectedDoctor, setSelectedDoctor] = React.useState<string>('all');
   const [filterAbnormalOnly, setFilterAbnormalOnly] = React.useState<boolean>(initialAbnormal);
-  const [sortField, setSortField] = React.useState<'date' | 'lab' | 'abnormal'>('date');
-  const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc'>('desc');
   const [uploadOpen, setUploadOpen] = React.useState(false);
+
+  // Track expanded state of individual report detail panels (default all expanded for zero-click visibility)
+  const [expandedReports, setExpandedReports] = React.useState<Record<string, boolean>>({});
 
   React.useEffect(() => {
     if (searchParams.get('filter') === 'abnormal') {
@@ -46,9 +55,19 @@ function ReportsContent() {
   React.useEffect(() => {
     getReports().then((data) => {
       setReports(data);
+      // Default expand all reports for 0-click value inspection
+      const initialExpanded: Record<string, boolean> = {};
+      data.forEach((r) => {
+        initialExpanded[r.id] = true;
+      });
+      setExpandedReports(initialExpanded);
       setLoading(false);
     });
   }, []);
+
+  const toggleReportExpand = (id: string) => {
+    setExpandedReports((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const labs = React.useMemo(() => {
     return Array.from(new Set(reports.map((r) => r.labName)));
@@ -65,7 +84,8 @@ function ReportsContent() {
           report.labName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           report.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           report.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          report.clinicalSummary.toLowerCase().includes(searchQuery.toLowerCase());
+          report.clinicalSummary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          report.tests.some((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const matchesLab = selectedLab === 'all' || report.labName === selectedLab;
         const matchesDoctor = selectedDoctor === 'all' || report.doctorName === selectedDoctor;
@@ -75,22 +95,10 @@ function ReportsContent() {
 
         return matchesQuery && matchesLab && matchesDoctor && matchesAbnormal;
       })
-      .sort((a, b) => {
-        let comp = 0;
-        if (sortField === 'date') {
-          comp = new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime();
-        } else if (sortField === 'lab') {
-          comp = a.labName.localeCompare(b.labName);
-        } else if (sortField === 'abnormal') {
-          const abA = a.tests.filter((t) => t.isAbnormal).length;
-          const abB = b.tests.filter((t) => t.isAbnormal).length;
-          comp = abA - abB;
-        }
-        return sortDirection === 'desc' ? -comp : comp;
-      });
-  }, [reports, searchQuery, selectedLab, selectedDoctor, filterAbnormalOnly, sortField, sortDirection]);
+      .sort((a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime());
+  }, [reports, searchQuery, selectedLab, selectedDoctor, filterAbnormalOnly]);
 
-  // Group filtered reports by date
+  // Group filtered reports by Date
   const groupedReports = React.useMemo(() => {
     const groups: { dateKey: string; formattedDate: string; items: Report[] }[] = [];
     
@@ -107,15 +115,6 @@ function ReportsContent() {
     return groups;
   }, [filteredReports]);
 
-  const toggleSort = (field: 'date' | 'lab' | 'abnormal') => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortField(field);
-      setSortDirection('desc');
-    }
-  };
-
   const handleNoOpAction = (actionName: string, reportId: string) => {
     toast.info(`${actionName} action triggered`, {
       description: `Report ${reportId} - UI mock shell handler executed cleanly.`,
@@ -123,18 +122,18 @@ function ReportsContent() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
+    <div className="space-y-6 pb-12">
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            Diagnostic Lab Reports <FileText className="h-5 w-5 text-primary" />
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
+            Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Manage, filter, and inspect structured medical lab reports grouped by date.
+            View full biomarker test values and reference range details grouped by date with 0-click inspection
           </p>
         </div>
-        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs">
+        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold rounded-xl h-10 px-4">
           <Plus className="h-4 w-4" /> Upload New Report
         </Button>
       </div>
@@ -142,26 +141,26 @@ function ReportsContent() {
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
 
       {/* Filter Controls Card */}
-      <Card className="shadow-xs border-border/80">
+      <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <CardContent className="p-4 space-y-3">
           <div className="flex flex-col md:flex-row gap-3">
             {/* Search Input */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search lab name, physician, clinical summary..."
+                placeholder="Search lab name, physician, test parameter (e.g. Glucose, Creatinine)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 text-xs h-9"
+                className="pl-9 text-xs h-9 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40"
               />
             </div>
 
             {/* Lab Filter */}
             <Select value={selectedLab} onValueChange={(val) => setSelectedLab(val || 'all')}>
-              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs">
+              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <SelectValue placeholder="All Diagnostic Labs" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all" className="text-xs">All Diagnostic Labs</SelectItem>
                 {labs.map((lab) => (
                   <SelectItem key={lab} value={lab} className="text-xs truncate">
@@ -173,10 +172,10 @@ function ReportsContent() {
 
             {/* Doctor Filter */}
             <Select value={selectedDoctor} onValueChange={(val) => setSelectedDoctor(val || 'all')}>
-              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs">
+              <SelectTrigger className="w-full md:w-[200px] h-9 text-xs rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <SelectValue placeholder="All Physicians" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all" className="text-xs">All Physicians</SelectItem>
                 {doctors.map((doc) => (
                   <SelectItem key={doc} value={doc} className="text-xs truncate">
@@ -191,162 +190,207 @@ function ReportsContent() {
               variant={filterAbnormalOnly ? 'default' : 'outline'}
               size="sm"
               onClick={() => setFilterAbnormalOnly((prev) => !prev)}
-              className="h-9 text-xs gap-1.5 shrink-0"
+              className="h-9 text-xs gap-1.5 shrink-0 rounded-xl font-semibold"
             >
               <AlertTriangle className="h-3.5 w-3.5" />
-              {filterAbnormalOnly ? 'Abnormal Only Active' : 'Filter Abnormal Only'}
+              {filterAbnormalOnly ? 'Abnormal Only' : 'Filter Abnormal'}
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Reports Table Card */}
-      <Card className="shadow-xs border-border/80 overflow-hidden">
-        <CardHeader className="py-4 px-6 border-b border-border/60 flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-base font-semibold">Reports Archive</CardTitle>
-            <CardDescription className="text-xs">
-              Showing {filteredReports.length} of {reports.length} diagnostic reports grouped across {groupedReports.length} dates
-            </CardDescription>
-          </div>
-        </CardHeader>
+      {/* Date-Grouped Reports List with Inline Detail Inspection */}
+      {loading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full rounded-3xl" />
+          ))}
+        </div>
+      ) : filteredReports.length === 0 ? (
+        <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-12 text-center space-y-3">
+          <FileText className="h-10 w-10 text-muted-foreground mx-auto" />
+          <p className="font-bold text-sm text-foreground">No lab reports match your search query.</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-xl text-xs"
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedLab('all');
+              setSelectedDoctor('all');
+              setFilterAbnormalOnly(false);
+            }}
+          >
+            Reset Filters
+          </Button>
+        </Card>
+      ) : (
+        <div className="space-y-8">
+          {groupedReports.map((group) => (
+            <div key={group.dateKey} className="space-y-4">
+              {/* Date Group Section Banner */}
+              <div className="flex items-center gap-3 px-2">
+                <div className="size-8 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
+                  <Calendar className="size-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-extrabold text-foreground font-mono">
+                    {group.formattedDate}
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground font-medium">
+                    {group.items.length} {group.items.length === 1 ? 'Diagnostic Lab Upload' : 'Separate Lab Uploads on this date'}
+                  </p>
+                </div>
+              </div>
 
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="p-6 space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full rounded-lg" />
-              ))}
-            </div>
-          ) : filteredReports.length === 0 ? (
-            <div className="p-12 text-center space-y-3">
-              <FileText className="h-10 w-10 text-muted-foreground mx-auto" />
-              <p className="font-medium text-sm">No reports match your current filter parameters.</p>
-              <p className="text-xs text-muted-foreground">Try clearing filters or search query.</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedLab('all');
-                  setSelectedDoctor('all');
-                  setFilterAbnormalOnly(false);
-                }}
-              >
-                Reset All Filters
-              </Button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-muted/40">
-                  <TableRow>
-                    <TableHead className="w-[150px]">
-                      <Button variant="ghost" size="sm" onClick={() => toggleSort('date')} className="text-xs font-semibold p-0 h-auto gap-1">
-                        Report Date <ArrowUpDown className="h-3 w-3" />
-                      </Button>
-                    </TableHead>
-                    <TableHead>
-                      <Button variant="ghost" size="sm" onClick={() => toggleSort('lab')} className="text-xs font-semibold p-0 h-auto gap-1">
-                        Diagnostic Center <ArrowUpDown className="h-3 w-3" />
-                      </Button>
-                    </TableHead>
-                    <TableHead className="text-xs font-semibold">Attending Doctor</TableHead>
-                    <TableHead className="text-xs font-semibold">Patient</TableHead>
-                    <TableHead className="text-center text-xs font-semibold">Total Tests</TableHead>
-                    <TableHead className="text-center">
-                      <Button variant="ghost" size="sm" onClick={() => toggleSort('abnormal')} className="text-xs font-semibold p-0 h-auto gap-1">
-                        Abnormal Flags <ArrowUpDown className="h-3 w-3" />
-                      </Button>
-                    </TableHead>
-                    <TableHead className="text-right text-xs font-semibold pr-6">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {groupedReports.map((group) => (
-                    <React.Fragment key={group.dateKey}>
-                      {/* Date Group Header Row */}
-                      <TableRow className="bg-slate-100/80 dark:bg-slate-800/60 font-bold border-t border-slate-200/80 dark:border-slate-700">
-                        <TableCell colSpan={7} className="py-2.5 px-4">
-                          <div className="flex items-center gap-2 text-xs text-foreground font-mono">
-                            <Calendar className="size-4 text-emerald-600 dark:text-emerald-400" />
-                            <span>{group.formattedDate}</span>
-                            <span className="text-[11px] font-normal text-muted-foreground">
-                              ({group.items.length} {group.items.length === 1 ? 'report' : 'reports'} uploaded)
-                            </span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+              {/* Individual Report Cards for this Date */}
+              <div className="space-y-4">
+                {group.items.map((report) => {
+                  const abnormalTests = report.tests.filter((t) => t.isAbnormal);
+                  const normalCount = report.tests.length - abnormalTests.length;
+                  const isExpanded = expandedReports[report.id] ?? true;
 
-                      {/* Individual Report Sub-Rows for this Date */}
-                      {group.items.map((report) => {
-                        const abnormalCount = report.tests.filter((t) => t.isAbnormal).length;
-                        return (
-                          <TableRow key={report.id} className="hover:bg-muted/30 transition-colors">
-                            <TableCell className="font-mono text-xs font-medium pl-6 text-muted-foreground">
-                              {report.formattedDate}
-                            </TableCell>
-                            <TableCell className="font-medium text-xs">
+                  return (
+                    <Card
+                      key={report.id}
+                      className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden rounded-3xl transition-all"
+                    >
+                      {/* Report Header Row */}
+                      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/30">
+                        <div className="space-y-1.5 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-extrabold text-base text-foreground flex items-center gap-2">
+                              <Building2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                               {report.labName}
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground">
-                              {report.doctorName}
-                            </TableCell>
-                            <TableCell className="text-xs font-mono">
-                              {report.patientName} ({report.patientId})
-                            </TableCell>
-                            <TableCell className="text-center font-mono text-xs">
-                              {report.tests.length}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {abnormalCount > 0 ? (
-                                <Badge variant="destructive" className="font-mono text-[11px] gap-1">
-                                  <AlertTriangle className="h-3 w-3" /> {abnormalCount} Abnormal
-                                </Badge>
-                              ) : (
-                                <Badge variant="secondary" className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20 gap-1">
-                                  <CheckCircle2 className="h-3 w-3" /> All Normal
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right pr-6">
-                              <div className="flex items-center justify-end gap-1">
-                                <Link href={`/reports/${report.id}`}>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" title="View Full Report">
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </Link>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                  title="Download Raw Report"
-                                  onClick={() => handleNoOpAction('Download', report.id)}
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                  title="Delete Report"
-                                  onClick={() => handleNoOpAction('Delete', report.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </TableBody>
-              </Table>
+                            </span>
+                            {abnormalTests.length > 0 ? (
+                              <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
+                                <AlertTriangle className="size-3 mr-1" /> {abnormalTests.length} Flagged
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none">
+                                <CheckCircle2 className="size-3 mr-1" /> All Normal
+                              </Badge>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap font-medium">
+                            <span className="flex items-center gap-1">
+                              <User className="size-3.5" /> {report.doctorName}
+                            </span>
+                            <span>•</span>
+                            <span className="font-mono">Patient: {report.patientName} ({report.patientId})</span>
+                            <span>•</span>
+                            <span className="font-mono font-bold text-foreground">{report.tests.length} Biomarkers Monitored</span>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => toggleReportExpand(report.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+                          >
+                            {isExpanded ? (
+                              <>
+                                <span>Hide Test Values</span>
+                                <ChevronUp className="size-3.5" />
+                              </>
+                            ) : (
+                              <>
+                                <span>Show Test Values ({report.tests.length})</span>
+                                <ChevronDown className="size-3.5" />
+                              </>
+                            )}
+                          </button>
+
+                          <Link href={`/reports/${report.id}`}>
+                            <button
+                              className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+                              title="Full Page Inspection"
+                            >
+                              <Eye className="size-4 text-primary" />
+                            </button>
+                          </Link>
+
+                          <button
+                            onClick={() => handleNoOpAction('Download PDF', report.id)}
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors"
+                            title="Download PDF"
+                          >
+                            <Download className="size-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Expanded Detailed Biomarker Table & Clinical Summary */}
+                      {isExpanded && (
+                        <div className="p-5 space-y-4 bg-white dark:bg-slate-900">
+                          {/* Clinical Observation Note */}
+                          {report.clinicalSummary && (
+                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs leading-relaxed space-y-1">
+                              <span className="font-bold text-foreground block font-mono text-[11px] uppercase tracking-wider">
+                                Clinical Observation Summary:
+                              </span>
+                              <p className="text-muted-foreground">{report.clinicalSummary}</p>
+                            </div>
+                          )}
+
+                          {/* Extracted Test Values Grid Table */}
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left text-xs">
+                              <thead>
+                                <tr className="border-b border-slate-200/60 dark:border-slate-800 text-muted-foreground font-semibold">
+                                  <th className="py-2 px-3">Test Parameter</th>
+                                  <th className="py-2 px-3">Category</th>
+                                  <th className="py-2 px-3">Observed Value</th>
+                                  <th className="py-2 px-3">Reference Range</th>
+                                  <th className="py-2 px-3 text-right">Status</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                                {report.tests.map((t, idx) => (
+                                  <tr key={idx} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                                    <td className="py-2.5 px-3 font-bold text-foreground">
+                                      {t.name}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-muted-foreground font-mono text-[11px]">
+                                      {t.category}
+                                    </td>
+                                    <td className="py-2.5 px-3 font-mono font-extrabold text-sm">
+                                      <span className={t.isAbnormal ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}>
+                                        {t.rawValue} <span className="text-xs font-normal text-muted-foreground">{t.unit}</span>
+                                      </span>
+                                    </td>
+                                    <td className="py-2.5 px-3 font-mono text-muted-foreground text-[11px]">
+                                      {t.referenceRange || 'Standard'}
+                                    </td>
+                                    <td className="py-2.5 px-3 text-right">
+                                      {t.isAbnormal ? (
+                                        <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
+                                          <AlertTriangle className="size-3" /> Flagged
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                                          <CheckCircle2 className="size-3" /> Optimal
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </Card>
+                  );
+                })}
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
