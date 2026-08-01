@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { UploadCloud, FileText, CheckCircle2, AlertCircle, Sparkles, Code } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle2, AlertCircle, Sparkles, Code, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { createReport } from '@/services/report-service';
+import { extractReportFromFile } from '@/services/parser-service';
 import { getPatientUuid } from '@/lib/patient-uuid';
 
 interface UploadDialogProps {
@@ -33,6 +34,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
   const [jsonText, setJsonText] = React.useState('');
   const [isUploading, setIsUploading] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [statusMessage, setStatusMessage] = React.useState('');
   const [isDragging, setIsDragging] = React.useState(false);
 
   const handleFileSelect = (selectedFile: File) => {
@@ -56,11 +58,14 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
     const activeUuid = getPatientUuid();
     setIsUploading(true);
     setProgress(15);
+    setStatusMessage('Connecting to Gemini 3.6 Flash Parser Service...');
 
+    // Option A: Raw JSON Paste Mode
     if (activeTab === 'json' && jsonText.trim()) {
       try {
         const parsed = JSON.parse(jsonText.trim());
         setProgress(60);
+        setStatusMessage('Saving parsed biomarkers to Cloud Firestore...');
         await createReport(parsed, activeUuid);
         setProgress(100);
 
@@ -83,42 +88,38 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
       return;
     }
 
-    // File upload simulation & Firestore save
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(async () => {
-            // Seed a sample parsed report to Firestore for the user
-            const mockReportPayload = {
-              patient_name: 'NOMAN',
-              patient_id: activeUuid,
-              date: new Date().toLocaleDateString('en-GB'), // DD/MM/YYYY
-              lab_name: 'IBN SINA DIAGNOSTIC & IMAGING CENTER',
-              doctor_name: 'Prof. Dr. Shohael Mahmud Arafat',
-              clinical_summary: 'Automated OCR extraction completed. Parameters within standard physiological baseline.',
-              tests: [
-                { name: 'Haemoglobin', value: '14.5', unit: 'g/dl', reference_range: '13.5-17.5', is_abnormal: false, category: 'Hematology' },
-                { name: 'Total Platelet Count', value: '210,000', unit: '/Cmm', reference_range: '1,50,000-4,50,000', is_abnormal: false, category: 'Hematology' },
-                { name: 'Glucose', value: '92', unit: 'mg/dl', reference_range: '70-99', is_abnormal: false, category: 'Biochemistry' },
-              ],
-            };
+    // Option B: Real Live 3rd-Party Extraction via https://medparser.vercel.app/extract
+    if (!file) return;
 
-            await createReport(mockReportPayload, activeUuid);
-            setIsUploading(false);
-            setOpen(false);
-            setFile(null);
-            setProgress(0);
-            toast.success('Medical Report Uploaded & Saved to Firestore', {
-              description: `Report mapped to Patient UUID: ${activeUuid}`,
-            });
-            window.dispatchEvent(new CustomEvent('patient_uuid_changed', { detail: activeUuid }));
-          }, 400);
-          return 100;
-        }
-        return prev + 25;
+    try {
+      setProgress(35);
+      setStatusMessage('Extracting text & quantitative parameters with Gemini 3.6 Flash...');
+      
+      const extractedResult = await extractReportFromFile(file);
+      
+      setProgress(75);
+      setStatusMessage('Persisting extracted report payload into Cloud Firestore...');
+
+      const savedReport = await createReport(extractedResult, activeUuid);
+      
+      setProgress(100);
+      setTimeout(() => {
+        setIsUploading(false);
+        setOpen(false);
+        setFile(null);
+        setProgress(0);
+        toast.success('Diagnostic Report Extracted & Saved', {
+          description: `Extracted ${savedReport.tests.length} tests for Patient UUID: ${activeUuid}`,
+        });
+        window.dispatchEvent(new CustomEvent('patient_uuid_changed', { detail: activeUuid }));
+      }, 400);
+    } catch (error: any) {
+      console.error('MedParser extraction error:', error);
+      setIsUploading(false);
+      toast.error('Extraction Failed', {
+        description: error?.message || 'Unable to process diagnostic report with MedParser API.',
       });
-    }, 250);
+    }
   };
 
   return (
@@ -130,7 +131,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
             <Sparkles className="h-5 w-5 text-emerald-500" /> Upload Diagnostic Lab Report
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
-            Upload a lab report document (PDF/Image) or paste Gemini 3.6 Flash parsed JSON payload.
+            Upload your lab test image/PDF. Powered by live <strong>MedParser (Gemini 3.6 Flash)</strong> service.
           </DialogDescription>
         </DialogHeader>
 
@@ -144,7 +145,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
                 : 'bg-zinc-100 dark:bg-zinc-900 text-muted-foreground hover:text-foreground'
             }`}
           >
-            <UploadCloud className="size-3.5" /> File Upload
+            <UploadCloud className="size-3.5" /> File Upload (MedParser)
           </button>
           <button
             onClick={() => setActiveTab('json')}
@@ -193,7 +194,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
                     Drag & drop report file here or <span className="text-emerald-500 underline">browse</span>
                   </p>
                   <p className="text-[11px] text-muted-foreground">
-                    Supports diagnostic scans or digital PDF files
+                    Supports clear diagnostic scans (JPG, PNG, JPEG) or digital PDF files
                   </p>
                 </div>
                 <div className="flex items-center gap-2 pt-1">
@@ -231,8 +232,8 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
                 {isUploading && (
                   <div className="space-y-2 pt-2 border-t border-zinc-200 dark:border-zinc-800">
                     <div className="flex justify-between text-xs font-semibold">
-                      <span className="flex items-center gap-1.5 text-emerald-500">
-                        <Sparkles className="h-3.5 w-3.5 animate-spin" /> Saving report to Cloud Firestore...
+                      <span className="flex items-center gap-1.5 text-emerald-500 truncate max-w-[340px]">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> {statusMessage}
                       </span>
                       <span className="font-mono">{progress}%</span>
                     </div>
@@ -256,7 +257,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
           <div className="flex items-center gap-2 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900 p-3 text-[11px] text-muted-foreground leading-relaxed">
             <AlertCircle className="h-4 w-4 shrink-0 text-emerald-500" />
             <span>
-              All reports are automatically linked to active Patient UUID: <strong className="text-foreground font-mono">{getPatientUuid()}</strong> in Cloud Firestore.
+              All extracted reports automatically persist to Cloud Firestore for Patient UUID: <strong className="text-foreground font-mono">{getPatientUuid()}</strong>.
             </span>
           </div>
         </div>
@@ -268,13 +269,15 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
           <Button
             onClick={handleProcessUpload}
             disabled={isUploading || (activeTab === 'file' && !file) || (activeTab === 'json' && !jsonText.trim())}
-            className="min-w-[130px] rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold shadow-xs"
+            className="min-w-[150px] rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold shadow-xs"
           >
             {isUploading ? (
-              <span className="flex items-center gap-2">Saving...</span>
+              <span className="flex items-center gap-2">
+                <Loader2 className="size-3.5 animate-spin" /> Extracting...
+              </span>
             ) : (
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" /> Save to Firestore
+                <CheckCircle2 className="h-4 w-4" /> Extract & Save
               </span>
             )}
           </Button>
