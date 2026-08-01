@@ -30,10 +30,13 @@ import {
   CheckCircle2,
   AlertTriangle,
   ArrowUpDown,
+  User,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePatientUuid } from '@/lib/patient-uuid';
 
 export default function ReportDetailPage() {
+  const [patientUuid] = usePatientUuid();
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
@@ -48,12 +51,13 @@ export default function ReportDetailPage() {
 
   React.useEffect(() => {
     if (id) {
-      getReportById(id).then((data) => {
+      setLoading(true);
+      getReportById(id, patientUuid).then((data) => {
         setReport(data);
         setLoading(false);
       });
     }
-  }, [id]);
+  }, [id, patientUuid]);
 
   const categories = React.useMemo(() => {
     if (!report) return [];
@@ -138,7 +142,7 @@ export default function ReportDetailPage() {
     return (
       <div className="text-center p-12 space-y-4">
         <h2 className="text-xl font-bold">Report Not Found</h2>
-        <p className="text-sm text-muted-foreground">The requested diagnostic report ID does not exist.</p>
+        <p className="text-sm text-muted-foreground">The requested diagnostic report ID does not exist for Patient UUID: {patientUuid}.</p>
         <Button onClick={() => router.push('/reports')} className="rounded-xl">Back to Reports</Button>
       </div>
     );
@@ -191,7 +195,7 @@ export default function ReportDetailPage() {
                 <Calendar className="h-3 w-3 mr-1.5 text-emerald-500" /> {report.formattedDate}
               </Badge>
               <Badge variant="secondary" className="font-mono text-xs rounded-full px-3 py-1">
-                ID: {report.patientId}
+                <User className="h-3 w-3 mr-1 text-emerald-500" /> Patient UUID: {report.patientId}
               </Badge>
             </div>
           </div>
@@ -274,7 +278,7 @@ export default function ReportDetailPage() {
         </Card>
       </div>
 
-      {/* Tests Data Table - Generous Readable Table Padding & Font */}
+      {/* Tests Data Table */}
       <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
         <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
