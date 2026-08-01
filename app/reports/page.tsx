@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getReports } from '@/services/report-service';
 import { Report } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,6 @@ import {
   Search,
   Eye,
   Download,
-  Trash2,
   Plus,
   CheckCircle2,
   AlertTriangle,
@@ -25,8 +24,6 @@ import {
   User,
   ChevronDown,
   ChevronUp,
-  Activity,
-  FileSpreadsheet,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
@@ -43,7 +40,7 @@ function ReportsContent() {
   const [filterAbnormalOnly, setFilterAbnormalOnly] = React.useState<boolean>(initialAbnormal);
   const [uploadOpen, setUploadOpen] = React.useState(false);
 
-  // Track expanded state of individual report detail panels (default all expanded for zero-click visibility)
+  // Track expanded state of individual report detail panels (default ALL COLLAPSED/HIDDEN)
   const [expandedReports, setExpandedReports] = React.useState<Record<string, boolean>>({});
 
   React.useEffect(() => {
@@ -55,10 +52,10 @@ function ReportsContent() {
   React.useEffect(() => {
     getReports().then((data) => {
       setReports(data);
-      // Default expand all reports for 0-click value inspection
+      // Default all reports collapsed as requested
       const initialExpanded: Record<string, boolean> = {};
       data.forEach((r) => {
-        initialExpanded[r.id] = true;
+        initialExpanded[r.id] = false;
       });
       setExpandedReports(initialExpanded);
       setLoading(false);
@@ -130,7 +127,7 @@ function ReportsContent() {
             Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            View full biomarker test values and reference range details grouped by date with 0-click inspection
+            Lab reports grouped by date. Click any report to expand full test parameters and values.
           </p>
         </div>
         <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold rounded-xl h-10 px-4">
@@ -199,7 +196,7 @@ function ReportsContent() {
         </CardContent>
       </Card>
 
-      {/* Date-Grouped Reports List with Inline Detail Inspection */}
+      {/* Date-Grouped Reports List */}
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -229,7 +226,7 @@ function ReportsContent() {
           {groupedReports.map((group) => (
             <div key={group.dateKey} className="space-y-4">
               {/* Date Group Section Banner */}
-              <div className="flex items-center gap-3 px-2">
+              <div className="flex items-center gap-3 px-2 pt-2">
                 <div className="size-8 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
                   <Calendar className="size-4" />
                 </div>
@@ -243,12 +240,11 @@ function ReportsContent() {
                 </div>
               </div>
 
-              {/* Individual Report Cards for this Date */}
-              <div className="space-y-4">
+              {/* Individual Separated Standalone Report Cards for this Date */}
+              <div className="space-y-4 pl-2 sm:pl-4">
                 {group.items.map((report) => {
                   const abnormalTests = report.tests.filter((t) => t.isAbnormal);
-                  const normalCount = report.tests.length - abnormalTests.length;
-                  const isExpanded = expandedReports[report.id] ?? true;
+                  const isExpanded = expandedReports[report.id] ?? false;
 
                   return (
                     <Card
@@ -256,7 +252,7 @@ function ReportsContent() {
                       className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden rounded-3xl transition-all"
                     >
                       {/* Report Header Row */}
-                      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/30">
+                      <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900">
                         <div className="space-y-1.5 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-extrabold text-base text-foreground flex items-center gap-2">
@@ -289,7 +285,7 @@ function ReportsContent() {
                         <div className="flex items-center gap-2 shrink-0">
                           <button
                             onClick={() => toggleReportExpand(report.id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-xs font-semibold text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs"
                           >
                             {isExpanded ? (
                               <>
@@ -325,10 +321,10 @@ function ReportsContent() {
 
                       {/* Expanded Detailed Biomarker Table & Clinical Summary */}
                       {isExpanded && (
-                        <div className="p-5 space-y-4 bg-white dark:bg-slate-900">
+                        <div className="p-5 space-y-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800">
                           {/* Clinical Observation Note */}
                           {report.clinicalSummary && (
-                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs leading-relaxed space-y-1">
+                            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs leading-relaxed space-y-1">
                               <span className="font-bold text-foreground block font-mono text-[11px] uppercase tracking-wider">
                                 Clinical Observation Summary:
                               </span>
@@ -337,15 +333,15 @@ function ReportsContent() {
                           )}
 
                           {/* Extracted Test Values Grid Table */}
-                          <div className="overflow-x-auto">
+                          <div className="overflow-x-auto rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
                             <table className="w-full text-left text-xs">
                               <thead>
-                                <tr className="border-b border-slate-200/60 dark:border-slate-800 text-muted-foreground font-semibold">
-                                  <th className="py-2 px-3">Test Parameter</th>
-                                  <th className="py-2 px-3">Category</th>
-                                  <th className="py-2 px-3">Observed Value</th>
-                                  <th className="py-2 px-3">Reference Range</th>
-                                  <th className="py-2 px-3 text-right">Status</th>
+                                <tr className="border-b border-slate-200/60 dark:border-slate-800 text-muted-foreground font-semibold bg-slate-50/80 dark:bg-slate-800/40">
+                                  <th className="py-2.5 px-3">Test Parameter</th>
+                                  <th className="py-2.5 px-3">Category</th>
+                                  <th className="py-2.5 px-3">Observed Value</th>
+                                  <th className="py-2.5 px-3">Reference Range</th>
+                                  <th className="py-2.5 px-3 text-right">Status</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
