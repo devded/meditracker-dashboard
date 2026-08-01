@@ -1,22 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { Bell, PanelLeft } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SearchDialog } from '@/components/search-dialog';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Sidebar } from './sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -48,29 +39,6 @@ export function Header() {
       <div className="flex items-center gap-2">
         {/* Simple 1-Click Light & Dark Mode Toggle */}
         <ThemeToggle />
-
-        {/* Notifications */}
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-xl">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-              </Button>
-            }
-          />
-          <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2">
-            <DropdownMenuLabel className="flex items-center justify-between text-xs font-bold">
-              <span>Notifications</span>
-              <Badge variant="secondary" className="text-[10px] font-mono">3 New</Badge>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-2.5 rounded-xl cursor-pointer text-xs space-y-1">
-              <div className="font-bold text-emerald-600 dark:text-emerald-400">Platelet Count Normalized</div>
-              <div className="text-muted-foreground text-[11px]">70,000 → 220,000 /Cmm over 3 visits.</div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
 
         {/* User Avatar */}
         <div className="pl-1">
