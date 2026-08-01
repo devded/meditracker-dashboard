@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FileText, Search, Eye, Download, Trash2, ArrowUpDown, Plus, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { FileText, Search, Eye, Download, Trash2, ArrowUpDown, Plus, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
 
@@ -90,6 +90,23 @@ function ReportsContent() {
       });
   }, [reports, searchQuery, selectedLab, selectedDoctor, filterAbnormalOnly, sortField, sortDirection]);
 
+  // Group filtered reports by date
+  const groupedReports = React.useMemo(() => {
+    const groups: { dateKey: string; formattedDate: string; items: Report[] }[] = [];
+    
+    filteredReports.forEach((report) => {
+      const dateKey = report.formattedDate;
+      let existingGroup = groups.find((g) => g.dateKey === dateKey);
+      if (!existingGroup) {
+        existingGroup = { dateKey, formattedDate: report.formattedDate, items: [] };
+        groups.push(existingGroup);
+      }
+      existingGroup.items.push(report);
+    });
+    
+    return groups;
+  }, [filteredReports]);
+
   const toggleSort = (field: 'date' | 'lab' | 'abnormal') => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -114,7 +131,7 @@ function ReportsContent() {
             Diagnostic Lab Reports <FileText className="h-5 w-5 text-primary" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Manage, filter, and inspect structured medical lab reports.
+            Manage, filter, and inspect structured medical lab reports grouped by date.
           </p>
         </div>
         <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs">
@@ -189,7 +206,7 @@ function ReportsContent() {
           <div>
             <CardTitle className="text-base font-semibold">Reports Archive</CardTitle>
             <CardDescription className="text-xs">
-              Showing {filteredReports.length} of {reports.length} diagnostic reports
+              Showing {filteredReports.length} of {reports.length} diagnostic reports grouped across {groupedReports.length} dates
             </CardDescription>
           </div>
         </CardHeader>
@@ -224,7 +241,7 @@ function ReportsContent() {
               <Table>
                 <TableHeader className="bg-muted/40">
                   <TableRow>
-                    <TableHead className="w-[140px]">
+                    <TableHead className="w-[150px]">
                       <Button variant="ghost" size="sm" onClick={() => toggleSort('date')} className="text-xs font-semibold p-0 h-auto gap-1">
                         Report Date <ArrowUpDown className="h-3 w-3" />
                       </Button>
@@ -246,66 +263,84 @@ function ReportsContent() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredReports.map((report) => {
-                    const abnormalCount = report.tests.filter((t) => t.isAbnormal).length;
-                    return (
-                      <TableRow key={report.id} className="hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-mono text-xs font-medium">
-                          {report.formattedDate}
-                        </TableCell>
-                        <TableCell className="font-medium text-xs">
-                          {report.labName}
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {report.doctorName}
-                        </TableCell>
-                        <TableCell className="text-xs font-mono">
-                          {report.patientName} ({report.patientId})
-                        </TableCell>
-                        <TableCell className="text-center font-mono text-xs">
-                          {report.tests.length}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {abnormalCount > 0 ? (
-                            <Badge variant="destructive" className="font-mono text-[11px] gap-1">
-                              <AlertTriangle className="h-3 w-3" /> {abnormalCount} Abnormal
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20 gap-1">
-                              <CheckCircle2 className="h-3 w-3" /> All Normal
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right pr-6">
-                          <div className="flex items-center justify-end gap-1">
-                            <Link href={`/reports/${report.id}`}>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" title="View Full Report">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </Link>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              title="Download Raw Report"
-                              onClick={() => handleNoOpAction('Download', report.id)}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                              title="Delete Report"
-                              onClick={() => handleNoOpAction('Delete', report.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                  {groupedReports.map((group) => (
+                    <React.Fragment key={group.dateKey}>
+                      {/* Date Group Header Row */}
+                      <TableRow className="bg-slate-100/80 dark:bg-slate-800/60 font-bold border-t border-slate-200/80 dark:border-slate-700">
+                        <TableCell colSpan={7} className="py-2.5 px-4">
+                          <div className="flex items-center gap-2 text-xs text-foreground font-mono">
+                            <Calendar className="size-4 text-emerald-600 dark:text-emerald-400" />
+                            <span>{group.formattedDate}</span>
+                            <span className="text-[11px] font-normal text-muted-foreground">
+                              ({group.items.length} {group.items.length === 1 ? 'report' : 'reports'} uploaded)
+                            </span>
                           </div>
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
+
+                      {/* Individual Report Sub-Rows for this Date */}
+                      {group.items.map((report) => {
+                        const abnormalCount = report.tests.filter((t) => t.isAbnormal).length;
+                        return (
+                          <TableRow key={report.id} className="hover:bg-muted/30 transition-colors">
+                            <TableCell className="font-mono text-xs font-medium pl-6 text-muted-foreground">
+                              {report.formattedDate}
+                            </TableCell>
+                            <TableCell className="font-medium text-xs">
+                              {report.labName}
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground">
+                              {report.doctorName}
+                            </TableCell>
+                            <TableCell className="text-xs font-mono">
+                              {report.patientName} ({report.patientId})
+                            </TableCell>
+                            <TableCell className="text-center font-mono text-xs">
+                              {report.tests.length}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {abnormalCount > 0 ? (
+                                <Badge variant="destructive" className="font-mono text-[11px] gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> {abnormalCount} Abnormal
+                                </Badge>
+                              ) : (
+                                <Badge variant="secondary" className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20 gap-1">
+                                  <CheckCircle2 className="h-3 w-3" /> All Normal
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right pr-6">
+                              <div className="flex items-center justify-end gap-1">
+                                <Link href={`/reports/${report.id}`}>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" title="View Full Report">
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </Link>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  title="Download Raw Report"
+                                  onClick={() => handleNoOpAction('Download', report.id)}
+                                >
+                                  <Download className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                  title="Delete Report"
+                                  onClick={() => handleNoOpAction('Delete', report.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
                 </TableBody>
               </Table>
             </div>
