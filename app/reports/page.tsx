@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
+import { usePatientUuid } from '@/lib/patient-uuid';
 
 function getCategoryTitle(report: Report) {
   const categories = Array.from(new Set(report.tests.map((t) => t.category).filter(Boolean)));
@@ -39,6 +40,7 @@ function getCategoryTitle(report: Report) {
 }
 
 function ReportsContent() {
+  const [patientUuid] = usePatientUuid();
   const searchParams = useSearchParams();
   const initialAbnormal = searchParams.get('filter') === 'abnormal';
 
@@ -60,7 +62,8 @@ function ReportsContent() {
   }, [searchParams]);
 
   React.useEffect(() => {
-    getReports().then((data) => {
+    setLoading(true);
+    getReports(patientUuid).then((data) => {
       setReports(data);
       const initialExpanded: Record<string, boolean> = {};
       data.forEach((r) => {
@@ -69,7 +72,7 @@ function ReportsContent() {
       setExpandedReports(initialExpanded);
       setLoading(false);
     });
-  }, []);
+  }, [patientUuid]);
 
   const toggleReportExpand = (id: string) => {
     setExpandedReports((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -136,7 +139,7 @@ function ReportsContent() {
             Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-500" />
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Lab reports grouped by date and categorized by test panel. Click any report row to expand details.
+            Cloud Firestore archives mapped to Patient UUID: <span className="font-mono font-bold text-foreground">{patientUuid}</span>
           </p>
         </div>
         <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold rounded-xl h-9 px-4">
@@ -146,7 +149,7 @@ function ReportsContent() {
 
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
 
-      {/* Filter Controls Card - Harmonized Design */}
+      {/* Filter Controls Card */}
       <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-2xl p-3.5">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search Input */}
@@ -213,7 +216,7 @@ function ReportsContent() {
       ) : filteredReports.length === 0 ? (
         <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-8 text-center space-y-3 rounded-2xl">
           <FileText className="h-8 w-8 text-muted-foreground mx-auto" />
-          <p className="font-bold text-xs text-foreground">No lab reports match your search query.</p>
+          <p className="font-bold text-xs text-foreground">No lab reports match your search query for Patient UUID: {patientUuid}.</p>
           <Button
             variant="outline"
             size="sm"
@@ -349,7 +352,7 @@ function ReportsContent() {
                             </div>
                           )}
 
-                          {/* Extracted Test Values Table - Harmonized Dimensions & Typography */}
+                          {/* Extracted Test Values Table */}
                           <div className="overflow-x-auto rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                             <table className="w-full text-left text-xs">
                               <thead>

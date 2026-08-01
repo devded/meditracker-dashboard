@@ -15,8 +15,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Download, Info, Calendar, CheckCircle2, AlertTriangle, Activity, TrendingUp } from 'lucide-react';
+import { Download, Info, Calendar, CheckCircle2, AlertTriangle, Activity, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePatientUuid } from '@/lib/patient-uuid';
 
 const PANELS = [
   {
@@ -84,6 +85,7 @@ const PANELS = [
 ];
 
 function HistoryContent() {
+  const [patientUuid] = usePatientUuid();
   const searchParams = useSearchParams();
   const initialPanel = searchParams.get('panel') || 'blood-work';
 
@@ -98,11 +100,12 @@ function HistoryContent() {
   }, [searchParams]);
 
   React.useEffect(() => {
-    getReports().then((res) => {
+    setLoading(true);
+    getReports(patientUuid).then((res) => {
       setReports(res);
       setLoading(false);
     });
-  }, []);
+  }, [patientUuid]);
 
   const filteredReports = React.useMemo(() => {
     const sorted = [...reports].sort(
@@ -186,11 +189,15 @@ function HistoryContent() {
             Biomarker History <TrendingUp className="h-5 w-5 text-emerald-500" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Longitudinal trend tracking & historical reference charts for vital clinical parameters.
+            Cloud Firestore longitudinal records mapped to Patient UUID: <span className="font-mono font-bold text-foreground">{patientUuid}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-2">
+          <Badge variant="outline" className="font-mono text-xs px-3 py-1 rounded-full border-zinc-200 dark:border-zinc-800 text-foreground">
+            <User className="h-3.5 w-3.5 mr-1 text-emerald-500" /> Patient: {patientUuid}
+          </Badge>
+
           <Select value={timeRange} onValueChange={(val) => setTimeRange(val || 'all')}>
             <SelectTrigger className="w-[160px] h-9 text-xs font-semibold rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
               <Calendar className="h-3.5 w-3.5 mr-1 text-muted-foreground" />

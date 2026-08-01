@@ -9,13 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import {
   Activity,
   Calendar,
-  CheckCircle2,
   FileText,
   TrendingUp,
   ShieldCheck,
   AlertTriangle,
-  Zap,
+  User,
 } from 'lucide-react';
+import { usePatientUuid } from '@/lib/patient-uuid';
 
 // Import requests dashboard charts
 import { BiomarkerTimelineChart } from '@/features/dashboard/biomarker-timeline-chart';
@@ -33,16 +33,18 @@ const QUICK_BIOMARKERS = [
 ];
 
 export default function DashboardPage() {
+  const [patientUuid] = usePatientUuid();
   const [reports, setReports] = React.useState<Report[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [activeBiomarker, setActiveBiomarker] = React.useState('Cholesterol');
 
   React.useEffect(() => {
-    getReports().then((reportsData) => {
+    setLoading(true);
+    getReports(patientUuid).then((reportsData) => {
       setReports(reportsData);
       setLoading(false);
     });
-  }, []);
+  }, [patientUuid]);
 
   const stats = React.useMemo(() => {
     if (!reports || reports.length === 0) {
@@ -106,13 +108,13 @@ export default function DashboardPage() {
             Biomarker Analytics & Trends <Activity className="h-5 w-5 text-emerald-500" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Longitudinal health monitoring, parameter timelines, and normalized reference comparisons.
+            Longitudinal health monitoring & Cloud Firestore records mapped to Patient UUID: <span className="font-mono font-bold text-foreground">{patientUuid}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="font-mono text-xs px-3 py-1 rounded-full border-zinc-200 dark:border-zinc-800 text-foreground">
-            <Calendar className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> Latest: {stats.latestDate}
+            <User className="h-3.5 w-3.5 mr-1.5 text-emerald-500" /> Patient: {patientUuid}
           </Badge>
           <Badge variant="secondary" className="font-mono text-xs px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-none font-bold">
             <ShieldCheck className="h-3.5 w-3.5 mr-1" /> {stats.pctNormal}% Optimal

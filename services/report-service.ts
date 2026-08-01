@@ -1,37 +1,44 @@
-import { RAW_MOCK_REPORTS } from '@/mock/reports';
-import { mapReport } from '@/utils/map-report';
-import { Report, BiomarkerTrendPoint, DashboardStats, InsightCardData } from '@/types';
-
-// Map raw reports to UI models and sort chronologically (newest first for general listing)
-const mappedReports: Report[] = RAW_MOCK_REPORTS.map((raw) => mapReport(raw, raw.id)).sort(
-  (a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime()
-);
+import { getReportsFromFirestore, getReportFromFirestoreById, saveReportToFirestore, deleteReportFromFirestore } from './firebase-service';
+import { getPatientUuid } from '@/lib/patient-uuid';
+import { Report, BiomarkerTrendPoint, DashboardStats, InsightCardData, ApiReport } from '@/types';
 
 /**
- * Fetch all medical reports.
+ * Fetch all medical reports for the specified (or active) Patient UUID from Cloud Firestore.
  */
-export async function getReports(): Promise<Report[]> {
-  // Simulate tiny async latency clean seam
-  return new Promise((resolve) => {
-    setTimeout(() => resolve([...mappedReports]), 50);
-  });
+export async function getReports(patientUuid?: string): Promise<Report[]> {
+  const uuid = patientUuid || getPatientUuid();
+  return await getReportsFromFirestore(uuid);
 }
 
 /**
- * Fetch a single report by ID.
+ * Fetch a single report by ID for the specified (or active) Patient UUID.
  */
-export async function getReportById(id: string): Promise<Report | null> {
-  return new Promise((resolve) => {
-    const report = mappedReports.find((r) => r.id === id);
-    setTimeout(() => resolve(report ? { ...report } : null), 50);
-  });
+export async function getReportById(id: string, patientUuid?: string): Promise<Report | null> {
+  const uuid = patientUuid || getPatientUuid();
+  return await getReportFromFirestoreById(id, uuid);
+}
+
+/**
+ * Save a newly uploaded / Gemini-parsed report to Cloud Firestore under Patient UUID.
+ */
+export async function createReport(apiReport: ApiReport | any, patientUuid?: string): Promise<Report> {
+  const uuid = patientUuid || getPatientUuid();
+  return await saveReportToFirestore(apiReport, uuid);
+}
+
+/**
+ * Delete a report from Cloud Firestore.
+ */
+export async function removeReport(id: string, patientUuid?: string): Promise<boolean> {
+  const uuid = patientUuid || getPatientUuid();
+  return await deleteReportFromFirestore(id, uuid);
 }
 
 /**
  * Get overall dashboard overview stats.
  */
-export async function getDashboardStats(): Promise<DashboardStats> {
-  const reports = await getReports();
+export async function getDashboardStats(patientUuid?: string): Promise<DashboardStats> {
+  const reports = await getReports(patientUuid);
   let totalTests = 0;
   let abnormalTests = 0;
   const categoriesSet = new Set<string>();
@@ -57,8 +64,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
  * Extract time-series values for a given biomarker across all reports.
  * Returns sorted oldest to newest for charts.
  */
-export async function getBiomarkerHistory(testName: string): Promise<BiomarkerTrendPoint[]> {
-  const reports = await getReports();
+export async function getBiomarkerHistory(testName: string, patientUuid?: string): Promise<BiomarkerTrendPoint[]> {
+  const reports = await getReports(patientUuid);
   // Oldest first for line chart progression
   const sortedReports = [...reports].sort(
     (a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime()
@@ -91,8 +98,8 @@ export async function getBiomarkerHistory(testName: string): Promise<BiomarkerTr
 /**
  * List all unique shared biomarkers available for timeline analysis.
  */
-export async function getAvailableBiomarkers(): Promise<string[]> {
-  const reports = await getReports();
+export async function getAvailableBiomarkers(patientUuid?: string): Promise<string[]> {
+  const reports = await getReports(patientUuid);
   const testCounts: Record<string, number> = {};
 
   reports.forEach((r) => {
@@ -110,8 +117,8 @@ export async function getAvailableBiomarkers(): Promise<string[]> {
 /**
  * Category counts across all reports for pie chart distribution.
  */
-export async function getCategoryDistribution(): Promise<{ category: string; count: number; fill: string }[]> {
-  const reports = await getReports();
+export async function getCategoryDistribution(patientUuid?: string): Promise<{ category: string; count: number; fill: string }[]> {
+  const reports = await getReports(patientUuid);
   const counts: Record<string, number> = {};
 
   reports.forEach((r) => {
@@ -138,11 +145,11 @@ export async function getCategoryDistribution(): Promise<{ category: string; cou
 /**
  * Abnormal count per report for bar chart trend.
  */
-export async function getAbnormalTrendByReport(): Promise<{ date: string; lab: string; total: number; abnormal: number; normal: number }[]> {
-  const reports = await getReports();
+export async function getAbnormalTrendByReport(patientUuid?: string): Promise<{ date: string; lab: string; total: number; abnormal: number; normal: number }[]> {
+  const reports = await getReports(patientUuid);
   // Oldest first for trend
   const sorted = [...reports].sort(
-    (a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime()
+    (a, b) => new Date(a.reportDate).getTime() - new Date(a.reportDate).getTime()
   );
 
   return sorted.map((r) => {
