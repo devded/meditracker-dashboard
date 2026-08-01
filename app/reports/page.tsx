@@ -25,6 +25,7 @@ import {
   ChevronDown,
   ChevronUp,
   Layers,
+  Stethoscope,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
@@ -260,9 +261,9 @@ function ReportsContent() {
                       key={report.id}
                       className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs overflow-hidden rounded-3xl transition-all"
                     >
-                      {/* Report Header Row Focused on Test Category */}
+                      {/* Sleek Minimal Collapsed Header Row Focused on Category Title & Status */}
                       <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-zinc-950">
-                        <div className="space-y-1.5 min-w-0">
+                        <div className="space-y-1 min-w-0">
                           <div className="flex items-center gap-2.5 flex-wrap">
                             <span className="font-extrabold text-base text-foreground flex items-center gap-2">
                               <Layers className="size-4 text-emerald-500" />
@@ -279,18 +280,8 @@ function ReportsContent() {
                             )}
                           </div>
 
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap font-medium">
-                            <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-semibold">
-                              <Building2 className="size-3.5 text-muted-foreground" /> {report.labName}
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <User className="size-3.5" /> {report.doctorName}
-                            </span>
-                            <span>•</span>
-                            <span className="font-mono">Patient: {report.patientName} ({report.patientId})</span>
-                            <span>•</span>
-                            <span className="font-mono font-bold text-foreground">{report.tests.length} Biomarkers Monitored</span>
+                          <div className="text-xs text-muted-foreground font-mono font-medium pt-0.5">
+                            <span className="text-foreground font-bold">{report.tests.length} Biomarkers Monitored</span>
                           </div>
                         </div>
 
@@ -332,16 +323,32 @@ function ReportsContent() {
                         </div>
                       </div>
 
-                      {/* Expanded Detailed Biomarker Table & Clinical Summary */}
+                      {/* Expanded Section: Contains Lab Center, Physician, Patient ID, Clinical Summary, and Biomarker Table */}
                       {isExpanded && (
                         <div className="p-5 space-y-4 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
+                          {/* Extra Report Metadata Card */}
+                          <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                            <div className="flex items-center gap-2 font-semibold text-foreground">
+                              <Building2 className="size-4 text-emerald-500 shrink-0" />
+                              <span>{report.labName}</span>
+                            </div>
+
+                            <div className="flex items-center gap-4 text-muted-foreground font-medium flex-wrap">
+                              <span className="flex items-center gap-1.5 text-foreground">
+                                <User className="size-3.5 text-muted-foreground" /> {report.doctorName}
+                              </span>
+                              <span>•</span>
+                              <span className="font-mono">Patient: <strong className="text-foreground">{report.patientName}</strong> ({report.patientId})</span>
+                            </div>
+                          </div>
+
                           {/* Clinical Observation Note */}
                           {report.clinicalSummary && (
-                            <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
-                              <span className="font-bold text-foreground block font-mono text-[11px] uppercase tracking-wider">
-                                Clinical Observation Summary:
+                            <div className="p-3.5 rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 text-xs leading-relaxed space-y-1">
+                              <span className="font-bold text-foreground font-mono text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                                <Stethoscope className="size-3.5 text-emerald-500" /> Clinical Observation Summary:
                               </span>
-                              <p className="text-muted-foreground">{report.clinicalSummary}</p>
+                              <p className="text-muted-foreground pl-5">{report.clinicalSummary}</p>
                             </div>
                           )}
 
