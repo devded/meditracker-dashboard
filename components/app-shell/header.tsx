@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Menu, Bell, Search, ShoppingCart, Mail, Moon, Sun, PanelLeft } from 'lucide-react';
+import { Bell, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SearchDialog } from '@/components/search-dialog';
@@ -44,23 +44,10 @@ export function Header() {
         <SearchDialog />
       </div>
 
-      {/* Right: Actions matching shadcnspace header */}
+      {/* Right: Actions */}
       <div className="flex items-center gap-2">
-        {/* Theme Toggle */}
+        {/* Simple 1-Click Light & Dark Mode Toggle */}
         <ThemeToggle />
-
-        {/* Language Indicator */}
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-base hidden sm:flex">
-          🇬🇧
-        </Button>
-
-        {/* Shopping Cart Badge */}
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-xl hidden sm:flex">
-          <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-[10px] font-extrabold flex items-center justify-center font-mono">
-            11
-          </span>
-        </Button>
 
         {/* Notifications */}
         <DropdownMenu>
@@ -84,11 +71,6 @@ export function Header() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Mail Icon */}
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hidden sm:flex">
-          <Mail className="h-4 w-4 text-muted-foreground" />
-        </Button>
 
         {/* User Avatar */}
         <div className="pl-1">
