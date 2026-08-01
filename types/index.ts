@@ -17,6 +17,12 @@ export interface ApiReport {
   tests: ApiTest[];
 }
 
+export interface ParsedApiResponse {
+  success: boolean;
+  model_used?: string;
+  data: ApiReport;
+}
+
 export interface Test {
   id: string;
   name: string;
