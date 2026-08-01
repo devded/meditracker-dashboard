@@ -24,9 +24,19 @@ import {
   User,
   ChevronDown,
   ChevronUp,
+  Activity,
+  Layers,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
+
+function getCategoryTitle(report: Report) {
+  const categories = Array.from(new Set(report.tests.map((t) => t.category).filter(Boolean)));
+  if (categories.length === 0) return 'Diagnostic Test Panel';
+  if (categories.length === 1) return `${categories[0]} Panel`;
+  if (categories.length === 2) return `${categories[0]} & ${categories[1]} Panel`;
+  return `${categories.slice(0, 2).join(' & ')} (+${categories.length - 2} Panel)`;
+}
 
 function ReportsContent() {
   const searchParams = useSearchParams();
@@ -52,7 +62,6 @@ function ReportsContent() {
   React.useEffect(() => {
     getReports().then((data) => {
       setReports(data);
-      // Default all reports collapsed as requested
       const initialExpanded: Record<string, boolean> = {};
       data.forEach((r) => {
         initialExpanded[r.id] = false;
@@ -82,7 +91,7 @@ function ReportsContent() {
           report.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           report.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           report.clinicalSummary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          report.tests.some((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
+          report.tests.some((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()) || (t.category && t.category.toLowerCase().includes(searchQuery.toLowerCase())));
 
         const matchesLab = selectedLab === 'all' || report.labName === selectedLab;
         const matchesDoctor = selectedDoctor === 'all' || report.doctorName === selectedDoctor;
@@ -127,7 +136,7 @@ function ReportsContent() {
             Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Lab reports grouped by date. Click any report to expand full test parameters and values.
+            Lab reports grouped by date and categorized by test panel. Click any report to expand full test parameters and values.
           </p>
         </div>
         <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold rounded-xl h-10 px-4">
@@ -145,7 +154,7 @@ function ReportsContent() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search lab name, physician, test parameter (e.g. Glucose, Creatinine)..."
+                placeholder="Search test panel category (e.g. Hematology, Hormone), physician, lab..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 text-xs h-9 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40"
@@ -235,29 +244,30 @@ function ReportsContent() {
                     {group.formattedDate}
                   </h2>
                   <p className="text-[11px] text-muted-foreground font-medium">
-                    {group.items.length} {group.items.length === 1 ? 'Diagnostic Lab Upload' : 'Separate Lab Uploads on this date'}
+                    {group.items.length} {group.items.length === 1 ? 'Diagnostic Test Panel' : 'Separate Test Panels on this date'}
                   </p>
                 </div>
               </div>
 
-              {/* Individual Separated Standalone Report Cards for this Date */}
+              {/* Individual Test Panel Cards for this Date */}
               <div className="space-y-4 pl-2 sm:pl-4">
                 {group.items.map((report) => {
                   const abnormalTests = report.tests.filter((t) => t.isAbnormal);
                   const isExpanded = expandedReports[report.id] ?? false;
+                  const categoryTitle = getCategoryTitle(report);
 
                   return (
                     <Card
                       key={report.id}
                       className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden rounded-3xl transition-all"
                     >
-                      {/* Report Header Row */}
+                      {/* Report Header Row Focused on Test Category */}
                       <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900">
                         <div className="space-y-1.5 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-2.5 flex-wrap">
                             <span className="font-extrabold text-base text-foreground flex items-center gap-2">
-                              <Building2 className="size-4 text-emerald-600 dark:text-emerald-400" />
-                              {report.labName}
+                              <Layers className="size-4 text-emerald-600 dark:text-emerald-400" />
+                              {categoryTitle}
                             </span>
                             {abnormalTests.length > 0 ? (
                               <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
@@ -270,7 +280,11 @@ function ReportsContent() {
                             )}
                           </div>
 
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap font-medium">
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap font-medium">
+                            <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-semibold">
+                              <Building2 className="size-3.5 text-muted-foreground" /> {report.labName}
+                            </span>
+                            <span>•</span>
                             <span className="flex items-center gap-1">
                               <User className="size-3.5" /> {report.doctorName}
                             </span>
