@@ -1,65 +1,88 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import * as React from 'react';
+import { getReports, getDashboardStats } from '@/services/report-service';
+import { Report, DashboardStats } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Import shadcnspace dashboard components
+import { ValueStatCards } from '@/features/dashboard/stat-cards';
+import { BiomarkerTimelineChart } from '@/features/dashboard/biomarker-timeline-chart';
+import { BiomarkerComparisonRangeChart } from '@/features/dashboard/biomarker-comparison-range-chart';
+import { RevenueUpdatesChart } from '@/features/dashboard/revenue-updates-chart';
+import { MonthlyEarningsChart } from '@/features/dashboard/monthly-earnings-chart';
+import { YearlyBackupDonut } from '@/features/dashboard/yearly-backup-donut';
+import { RecentTransactionsList } from '@/features/dashboard/recent-transactions-list';
+import { BiomarkerHeatmapGrid } from '@/features/dashboard/biomarker-heatmap-grid';
+import { TopCampaignsTable } from '@/features/dashboard/top-campaigns-table';
+import { SparklineParameterCards } from '@/features/dashboard/sparkline-parameter-cards';
+import { ClinicalInsightsSection } from '@/features/dashboard/clinical-insights-section';
+
+export default function DashboardPage() {
+  const [stats, setStats] = React.useState<DashboardStats | null>(null);
+  const [reports, setReports] = React.useState<Report[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    Promise.all([getDashboardStats(), getReports()]).then(([statsData, reportsData]) => {
+      setStats(statsData);
+      setReports(reportsData);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-40 w-full rounded-3xl" />
+        <div className="grid gap-6 md:grid-cols-3">
+          <Skeleton className="h-[300px] md:col-span-2 rounded-3xl" />
+          <Skeleton className="h-[300px] rounded-3xl" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-6 pb-12">
+      {/* Top Row: Hero Telemetry Card (2 cols) + Optimal Card (1 col) + Flagged Card (1 col) */}
+      {stats && <ValueStatCards stats={stats} reports={reports} />}
+
+      {/* Requested Feature Section 1: Biomarker Timeline Chart */}
+      <BiomarkerTimelineChart reports={reports} />
+
+      {/* Requested Feature Section 2: Biomarker Comparison Chart with Green Reference Band (0-100%) */}
+      <BiomarkerComparisonRangeChart reports={reports} />
+
+      {/* Second Row: Biomarker Range Updates (2 cols) + Overall Health Score & Organ System Donut (1 col stack) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <RevenueUpdatesChart reports={reports} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="space-y-6">
+          <MonthlyEarningsChart />
+          <YearlyBackupDonut />
         </div>
-      </main>
+      </div>
+
+      {/* Third Row: Biomarker Status Heatmap Grid (2 cols) + Recent Diagnostic Reports List (1 col) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <BiomarkerHeatmapGrid reports={reports} />
+        </div>
+        <div>
+          <RecentTransactionsList reports={reports} />
+        </div>
+      </div>
+
+      {/* Fourth Row: Biomarker Reference Range Proximity Table */}
+      <TopCampaignsTable />
+
+      {/* Fifth Row: Embedded Sparklines Parameter Cards */}
+      <SparklineParameterCards reports={reports} />
+
+      {/* Sixth Row: Automated Clinical Observations */}
+      <ClinicalInsightsSection reports={reports} />
     </div>
   );
 }
