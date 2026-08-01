@@ -64,10 +64,6 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
             setProgress(0);
             toast.success('Medical report uploaded & processed successfully', {
               description: 'OCR parsing mock completed: 23 biomarkers extracted.',
-              action: {
-                label: 'View Report',
-                onClick: () => {},
-              },
             });
           }, 400);
           return 100;
@@ -80,12 +76,12 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       {trigger && <DialogTrigger render={trigger as any} />}
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent className="sm:max-w-[520px] rounded-3xl p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
-            <Sparkles className="h-5 w-5 text-primary" /> Upload Medical Lab Report
+          <DialogTitle className="flex items-center gap-2 text-xl font-bold font-sans text-foreground">
+            <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /> Upload Medical Lab Report
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs text-muted-foreground mt-1">
             Upload your lab test document (PDF or image). Our automated parser will map and extract biomarker values automatically.
           </DialogDescription>
         </DialogHeader>
@@ -99,10 +95,10 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
               }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 ${
+              className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 ${
                 isDragging
-                  ? 'border-primary bg-primary/5 scale-[0.99]'
-                  : 'border-border/80 hover:border-primary/50 hover:bg-accent/40'
+                  ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/20 scale-[0.99]'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-emerald-600/50 hover:bg-slate-50 dark:hover:bg-slate-800/40'
               }`}
               onClick={() => {
                 const input = document.createElement('input');
@@ -116,34 +112,34 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
                 input.click();
               }}
             >
-              <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-1">
-                <UploadCloud className="h-7 w-7" />
+              <div className="h-12 w-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <UploadCloud className="h-6 w-6" />
               </div>
               <div className="space-y-1">
-                <p className="font-medium text-sm">
-                  Drag & drop report file here or <span className="text-primary underline">browse</span>
+                <p className="font-semibold text-xs text-foreground">
+                  Drag & drop report file here or <span className="text-emerald-600 dark:text-emerald-400 underline">browse</span>
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] text-muted-foreground">
                   Supports clear diagnostic scans or digital PDFs
                 </p>
               </div>
-              <div className="flex items-center gap-2 pt-2">
-                <Badge variant="outline" className="text-[11px] font-mono">PDF</Badge>
-                <Badge variant="outline" className="text-[11px] font-mono">JPG</Badge>
-                <Badge variant="outline" className="text-[11px] font-mono">PNG</Badge>
-                <Badge variant="outline" className="text-[11px] font-mono">JPEG</Badge>
+              <div className="flex items-center gap-2 pt-1">
+                <Badge variant="outline" className="text-[10px] font-mono rounded-full">PDF</Badge>
+                <Badge variant="outline" className="text-[10px] font-mono rounded-full">JPG</Badge>
+                <Badge variant="outline" className="text-[10px] font-mono rounded-full">PNG</Badge>
+                <Badge variant="outline" className="text-[10px] font-mono rounded-full">JPEG</Badge>
               </div>
             </div>
           ) : (
-            <div className="border rounded-xl p-4 bg-card space-y-4">
+            <div className="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-800/40 space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                    <FileText className="h-6 w-6" />
+                  <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
+                    <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm truncate max-w-[280px]">{file.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-bold text-xs truncate max-w-[280px] text-foreground">{file.name}</p>
+                    <p className="text-[11px] text-muted-foreground font-mono">
                       {(file.size / (1024 * 1024)).toFixed(2)} MB · {file.type || 'Document'}
                     </p>
                   </div>
@@ -152,7 +148,7 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-xs rounded-xl text-muted-foreground hover:text-foreground"
                     onClick={() => setFile(null)}
                   >
                     Change
@@ -161,21 +157,21 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
               </div>
 
               {isUploading && (
-                <div className="space-y-2 pt-2 border-t">
-                  <div className="flex justify-between text-xs font-medium">
-                    <span className="flex items-center gap-1.5 text-primary">
+                <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                       <Sparkles className="h-3.5 w-3.5 animate-spin" /> Parsing document structure & extracting tests...
                     </span>
-                    <span>{progress}%</span>
+                    <span className="font-mono">{progress}%</span>
                   </div>
-                  <Progress value={progress} className="h-2" />
+                  <Progress value={progress} className="h-2 rounded-full" />
                 </div>
               )}
             </div>
           )}
 
-          <div className="flex items-center gap-2 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
-            <AlertCircle className="h-4 w-4 shrink-0 text-primary" />
+          <div className="flex items-center gap-2 rounded-2xl bg-slate-100/80 dark:bg-slate-800/60 p-3 text-[11px] text-muted-foreground leading-relaxed">
+            <AlertCircle className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>
               This is a UI mock shell. Uploading simulates OCR extraction and seeds data into local state without making external server calls.
             </span>
@@ -183,10 +179,14 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-2">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isUploading}>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isUploading} className="rounded-xl text-xs font-semibold">
             Cancel
           </Button>
-          <Button onClick={simulateUpload} disabled={!file || isUploading} className="min-w-[110px]">
+          <Button
+            onClick={simulateUpload}
+            disabled={!file || isUploading}
+            className="min-w-[120px] rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 text-xs font-bold shadow-xs"
+          >
             {isUploading ? (
               <span className="flex items-center gap-2">Processing...</span>
             ) : (
