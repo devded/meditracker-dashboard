@@ -1,106 +1,51 @@
-import { db } from '@/lib/firebase';
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  query,
-  orderBy,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { Report, ApiReport } from '@/types';
 import { RAW_MOCK_REPORTS } from '@/mock/reports';
 import { mapReport } from '@/utils/map-report';
-import { ApiReport, Report } from '@/types';
 
 /**
- * Seed initial mock reports into Cloud Firestore under a specific Patient UUID if none exist.
- */
-export async function seedMockReportsToFirestore(patientUuid: string): Promise<Report[]> {
-  const seededReports: Report[] = [];
-
-  for (const rawMock of RAW_MOCK_REPORTS) {
-    const reportId = rawMock.id;
-    const mapped = mapReport(rawMock, reportId);
-    // Bind to the active patient UUID
-    mapped.patientId = patientUuid;
-
-    try {
-      const docRef = doc(db, 'users', patientUuid, 'reports', reportId);
-      await setDoc(docRef, {
-        ...rawMock,
-        patient_id: patientUuid,
-        createdAt: serverTimestamp(),
-      });
-      seededReports.push(mapped);
-    } catch (err) {
-      console.warn('Firestore seeding fallback (offline mode):', err);
-      seededReports.push(mapped);
-    }
-  }
-
-  return seededReports.sort(
-    (a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime()
-  );
-}
-
-/**
- * Fetch all diagnostic reports for a given Patient UUID from Cloud Firestore.
- * Automatically seeds default reports if the Firestore collection is empty.
+ * Fetch all diagnostic reports for a Patient UUID directly via Next.js Server API Route (/api/reports).
+ * Powered by Firebase Admin SDK server-side (immune to browser adblockers / ERR_BLOCKED_BY_CLIENT).
  */
 export async function getReportsFromFirestore(patientUuid: string): Promise<Report[]> {
   try {
-    const reportsRef = collection(db, 'users', patientUuid, 'reports');
-    const q = query(reportsRef, orderBy('date', 'desc'));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      // Auto-seed mock reports for new Patient UUID
-      return await seedMockReportsToFirestore(patientUuid);
-    }
-
-    const reports: Report[] = [];
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data() as ApiReport;
-      const report = mapReport(data, docSnap.id);
-      report.patientId = patientUuid;
-      reports.push(report);
+    const res = await fetch(`/api/reports?uuid=${encodeURIComponent(patientUuid)}`, {
+      cache: 'no-store',
     });
-
-    return reports.sort(
-      (a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime()
-    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.reports)) {
+        return data.reports;
+      }
+    }
   } catch (error) {
-    console.warn('Firestore fetch error, falling back to local dataset:', error);
-    // Fallback to local memory mock reports filtered by UUID
-    return RAW_MOCK_REPORTS.map((raw) => {
-      const r = mapReport(raw, raw.id);
-      r.patientId = patientUuid;
-      return r;
-    }).sort((a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime());
+    console.warn('Server API Route fetch warning, using local dataset:', error);
   }
+
+  return RAW_MOCK_REPORTS.map((raw) => {
+    const r = mapReport(raw, raw.id);
+    r.patientId = patientUuid;
+    return r;
+  }).sort((a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime());
 }
 
 /**
- * Fetch a single report by ID for a Patient UUID from Cloud Firestore.
+ * Fetch a single report by ID for a Patient UUID via Server API Route (/api/reports/[id]).
  */
 export async function getReportFromFirestoreById(reportId: string, patientUuid: string): Promise<Report | null> {
   try {
-    const docRef = doc(db, 'users', patientUuid, 'reports', reportId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const data = docSnap.data() as ApiReport;
-      const report = mapReport(data, docSnap.id);
-      report.patientId = patientUuid;
-      return report;
+    const res = await fetch(`/api/reports/${encodeURIComponent(reportId)}?uuid=${encodeURIComponent(patientUuid)}`, {
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.report) {
+        return data.report;
+      }
     }
   } catch (error) {
-    console.warn('Firestore getDoc error:', error);
+    console.warn('Server API Route getDoc error:', error);
   }
 
-  // Fallback check in mock reports
   const localMock = RAW_MOCK_REPORTS.find((r) => r.id === reportId);
   if (localMock) {
     const r = mapReport(localMock, localMock.id);
@@ -112,42 +57,46 @@ export async function getReportFromFirestoreById(reportId: string, patientUuid: 
 }
 
 /**
- * Add or update a parsed diagnostic report in Cloud Firestore for a Patient UUID.
- * Handles both direct ApiReport and Gemini parsed response wrappers ({ success: true, data: { ... } }).
+ * Add or update a parsed diagnostic report via Server API Route (/api/reports).
  */
 export async function saveReportToFirestore(rawInput: ApiReport | any, patientUuid: string): Promise<Report> {
   const apiReport: ApiReport = ('data' in rawInput && rawInput.data) ? rawInput.data : rawInput;
   const reportId = `rep_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-  
-  // Set patient ID
   apiReport.patient_id = patientUuid;
 
   const mappedReport = mapReport(apiReport, reportId);
   mappedReport.patientId = patientUuid;
 
   try {
-    const docRef = doc(db, 'users', patientUuid, 'reports', reportId);
-    await setDoc(docRef, {
-      ...apiReport,
-      createdAt: serverTimestamp(),
+    const res = await fetch('/api/reports', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patientUuid, apiReport }),
     });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && data.report) {
+        return data.report;
+      }
+    }
   } catch (error) {
-    console.error('Failed to save report to Firestore:', error);
+    console.error('Server API Route POST report error:', error);
   }
 
   return mappedReport;
 }
 
 /**
- * Delete a report from Cloud Firestore for a Patient UUID.
+ * Delete a report for a Patient UUID via Server API Route (/api/reports/[id]).
  */
 export async function deleteReportFromFirestore(reportId: string, patientUuid: string): Promise<boolean> {
   try {
-    const docRef = doc(db, 'users', patientUuid, 'reports', reportId);
-    await deleteDoc(docRef);
-    return true;
+    const res = await fetch(`/api/reports/${encodeURIComponent(reportId)}?uuid=${encodeURIComponent(patientUuid)}`, {
+      method: 'DELETE',
+    });
+    return res.ok;
   } catch (error) {
-    console.error('Failed to delete report from Firestore:', error);
+    console.error('Server API Route DELETE report error:', error);
     return false;
   }
 }

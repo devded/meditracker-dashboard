@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDummyKeyForDevMeditracker2026",
@@ -13,5 +13,7 @@ const firebaseConfig = {
 // Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Cloud Firestore Instance
-export const db = getFirestore(app);
+// Initialize Cloud Firestore with experimentalAutoDetectLongPolling to prevent adblocker ERR_BLOCKED_BY_CLIENT errors
+export const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true,
+});
