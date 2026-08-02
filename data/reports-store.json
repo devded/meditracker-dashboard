@@ -176,559 +176,9 @@
           "is_abnormal": null,
           "category": "Hematology"
         }
-      ]
-    },
-    "rep_1785629912659_9m3f": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "21/07/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
-      "clinical_summary": "Patient exhibits anemia indicated by decreased Red Blood Cells (3.01 million/µl), Haemoglobin (9.80 g/dL), and HCT (28.80%). Platelets are also low (120 K/µL) with elevated MPV (9.50 fl). White blood cell count and differential counts are within normal limits.",
-      "tests": [
-        {
-          "name": "White Blood Cells",
-          "value": "5.00",
-          "unit": "K / µL",
-          "reference_range": "4.00 - 10.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Neutrophils",
-          "value": "3.25",
-          "unit": "K / µL",
-          "reference_range": "2.00 - 7.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Lymphocyte",
-          "value": "1.30",
-          "unit": "K / µL",
-          "reference_range": "1.00 - 3.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Monocyte",
-          "value": "0.25",
-          "unit": "K / µL",
-          "reference_range": "0.20 - 1.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Eosinophil",
-          "value": "0.20",
-          "unit": "K / µL",
-          "reference_range": "0.02 - 0.50",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Neutrophil%",
-          "value": "65",
-          "unit": "%",
-          "reference_range": "40.00 - 80.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Lymphocyte%",
-          "value": "26",
-          "unit": "%",
-          "reference_range": "20.00 - 40.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Monocyte%",
-          "value": "05",
-          "unit": "%",
-          "reference_range": "2.00 - 10.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Eosinophil%",
-          "value": "04",
-          "unit": "%",
-          "reference_range": "1.00 - 6.00",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Basophil%",
-          "value": "00",
-          "unit": "%",
-          "reference_range": "<1-2",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Red Blood Cells",
-          "value": "3.01",
-          "unit": "million/µl",
-          "reference_range": "3.80 - 4.80",
-          "is_abnormal": true,
-          "category": "Hematology"
-        },
-        {
-          "name": "Haemoglobin",
-          "value": "9.80",
-          "unit": "g/dL",
-          "reference_range": "12.00 - 15.00",
-          "is_abnormal": true,
-          "category": "Hematology"
-        },
-        {
-          "name": "HCT",
-          "value": "28.80",
-          "unit": "%",
-          "reference_range": "34.80 - 45.00",
-          "is_abnormal": true,
-          "category": "Hematology"
-        },
-        {
-          "name": "MCV",
-          "value": "95.7",
-          "unit": "fl",
-          "reference_range": "79 - 96",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "MCH",
-          "value": "32.6",
-          "unit": "pg",
-          "reference_range": "26 - 33",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "MCHC",
-          "value": "34.0",
-          "unit": "g/dL",
-          "reference_range": "32 - 36",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "RDW-CV(%)",
-          "value": "13.9",
-          "unit": "%",
-          "reference_range": "11 - 15",
-          "is_abnormal": false,
-          "category": "Hematology"
-        },
-        {
-          "name": "Platelets",
-          "value": "120",
-          "unit": "K / µL",
-          "reference_range": "150 - 410",
-          "is_abnormal": true,
-          "category": "Hematology"
-        },
-        {
-          "name": "MPV",
-          "value": "9.50",
-          "unit": "fl",
-          "reference_range": "6.30 - 9.10",
-          "is_abnormal": true,
-          "category": "Hematology"
-        },
-        {
-          "name": "PCT",
-          "value": "0.11",
-          "unit": "%",
-          "reference_range": null,
-          "is_abnormal": null,
-          "category": "Hematology"
-        },
-        {
-          "name": "PDW",
-          "value": "8.90",
-          "unit": "fl",
-          "reference_range": null,
-          "is_abnormal": null,
-          "category": "Hematology"
-        }
-      ]
-    },
-    "rep_1785629985205_izcm": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "21/07/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
-      "clinical_summary": "Serum Creatinine is elevated at 1.84 mg/dL compared to the normal adult female reference range of 0.50 - 0.90 mg/dL.",
-      "tests": [
-        {
-          "name": "Serum Creatinine",
-          "value": "1.84",
-          "unit": "mg/dL",
-          "reference_range": "0.50 - 0.90",
-          "is_abnormal": true,
-          "category": "Biochemistry"
-        }
-      ]
-    },
-    "rep_1785630045832_0igl": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "21/07/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
-      "clinical_summary": "Serum electrolyte testing shows low levels of carbon dioxide (20.00 mmol/L) and bicarbonate (18.00 mmol/L). Sodium, potassium, and chloride levels are within their respective normal reference ranges.",
-      "tests": [
-        {
-          "name": "Sodium (Na)",
-          "value": "137.00",
-          "unit": "mmol/L",
-          "reference_range": "136.0 - 145.0",
-          "is_abnormal": false,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Potassium (K)",
-          "value": "4.67",
-          "unit": "mmol/L",
-          "reference_range": "3.50 - 5.10",
-          "is_abnormal": false,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Chloride (Cl)",
-          "value": "104.30",
-          "unit": "mmol/L",
-          "reference_range": "98.00 - 107.00",
-          "is_abnormal": false,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Carbondioxide (CO2)",
-          "value": "20.00",
-          "unit": "mmol/L",
-          "reference_range": "24.00 - 30.00",
-          "is_abnormal": true,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Bicarbonate (HCO3)",
-          "value": "18.00",
-          "unit": "mmol/L",
-          "reference_range": "22.00 - 28.00",
-          "is_abnormal": true,
-          "category": "Electrolytes"
-        }
-      ]
-    },
-    "rep_1785630087311_7eeu": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "21/07/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
-      "clinical_summary": "Serum Calcium test result is normal at 9.15 mg/dL.",
-      "tests": [
-        {
-          "name": "Calcium",
-          "value": "9.15",
-          "unit": "mg/dL",
-          "reference_range": "8.80-10.60",
-          "is_abnormal": false,
-          "category": "Biochemistry"
-        }
-      ]
-    },
-    "rep_1785630840453_0mpp": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "29/01/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
-      "clinical_summary": "Urine Routine Examination with trace Albumin, 1-2 Epithelial Cells/HPF, and 2-4 Pus Cells/HPF.",
-      "tests": [
-        {
-          "name": "Quantity",
-          "value": "30 mL received (Approximate)",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": null,
-          "category": "Physical Examination"
-        },
-        {
-          "name": "Color",
-          "value": "Straw",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Physical Examination"
-        },
-        {
-          "name": "Appearance",
-          "value": "Clear",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Physical Examination"
-        },
-        {
-          "name": "Sediment",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Physical Examination"
-        },
-        {
-          "name": "Urine for Specific Gravity",
-          "value": "1.010",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Reaction (PH)",
-          "value": "7.50",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Albumin",
-          "value": "Trace",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": true,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Sugar",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Phosphate",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Bilirubin",
-          "value": "Negative",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Urobilinogen",
-          "value": "Normal",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Nitrite",
-          "value": "Absent",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Ketone",
-          "value": "Absent",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Chemical Examination"
-        },
-        {
-          "name": "Epithelial Cells",
-          "value": "1-2",
-          "unit": "/HPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "RBC",
-          "value": "Nil",
-          "unit": "/HPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Pus Cells",
-          "value": "2-4",
-          "unit": "/HPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Cellular Cast",
-          "value": "Nil",
-          "unit": "/LPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Granular Casts",
-          "value": "Nil",
-          "unit": "/LPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Hyaline Casts",
-          "value": "Nil",
-          "unit": "/LPF",
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Calcium Oxalate",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Triple Phosphate",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Uric Acid",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Amorphous Phosphate",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        },
-        {
-          "name": "Urates",
-          "value": "Nil",
-          "unit": null,
-          "reference_range": null,
-          "is_abnormal": false,
-          "category": "Microscopic Examination"
-        }
-      ]
-    },
-    "rep_1785630875700_pamf": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "30/01/2026 10:17PM",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
-      "clinical_summary": "Magnesium level is within normal limits.",
-      "tests": [
-        {
-          "name": "Magnesium",
-          "value": "1.80",
-          "unit": "mg/dL",
-          "reference_range": "1.60 - 2.30",
-          "is_abnormal": false,
-          "category": "Biochemistry"
-        }
-      ]
-    },
-    "rep_1785630895093_xzpo": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "29/01/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
-      "clinical_summary": "Serum electrolyte test shows severe hyperkalemia (Potassium: 6.85 mmol/L) and reduced carbon dioxide (18.00 mmol/L) and bicarbonate (16.00 mmol/L) levels, suggestive of metabolic acidosis.",
-      "tests": [
-        {
-          "name": "Sodium (Na)",
-          "value": "136.00",
-          "unit": "mmol/L",
-          "reference_range": "136.0 - 145.0",
-          "is_abnormal": false,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Potassium (K)",
-          "value": "6.85",
-          "unit": "mmol/L",
-          "reference_range": "3.50 - 5.10",
-          "is_abnormal": true,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Chloride (Cl)",
-          "value": "106.20",
-          "unit": "mmol/L",
-          "reference_range": "98.00 - 107.00",
-          "is_abnormal": false,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Carbondioxide (CO2)",
-          "value": "18.00",
-          "unit": "mmol/L",
-          "reference_range": "24.00 - 30.00",
-          "is_abnormal": true,
-          "category": "Electrolytes"
-        },
-        {
-          "name": "Bicarbonate (HCO3)",
-          "value": "16.00",
-          "unit": "mmol/L",
-          "reference_range": "22.00 - 28.00",
-          "is_abnormal": true,
-          "category": "Electrolytes"
-        }
-      ]
-    },
-    "rep_1785630943106_uk8y": {
-      "patient_name": "Mrs. Parul Islam",
-      "patient_id": "D198349",
-      "date": "29/01/2026",
-      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
-      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
-      "clinical_summary": "Elevated serum creatinine level indicating impaired renal function.",
-      "tests": [
-        {
-          "name": "Serum Creatinine",
-          "value": "2.24",
-          "unit": "mg/dL",
-          "reference_range": "0.50 - 0.90",
-          "is_abnormal": true,
-          "category": "Biochemistry"
-        }
-      ]
+      ],
+      "reportDate": "2026-07-21",
+      "formattedDate": "21 Jul 2026"
     },
     "rep_1785665138430_sdyb": {
       "patient_name": "Mrs. Parul Islam",
@@ -917,7 +367,895 @@
         "sha256": "b1d7fccb1000736ea5932c2280382e1a63030a1a07dbefec0276bc0bdfdc804b",
         "uploadedAt": "2026-08-02T10:05:24.005Z",
         "extractorModel": "gemini-3.6-flash"
-      }
+      },
+      "reportDate": "2026-01-29",
+      "formattedDate": "29 Jan 2026"
+    },
+    "rep_1785666866477_ta48": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "29/01/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
+      "clinical_summary": "Serum Creatinine is elevated at 2.24 mg/dL for an adult female (reference range: 0.50 - 0.90 mg/dL), indicating impaired kidney function.",
+      "tests": [
+        {
+          "name": "Serum Creatinine",
+          "value": "2.24",
+          "unit": "mg/dL",
+          "reference_range": "0.50 - 0.90",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/c4425294b523287814f4dc0952db4296d215d84f412ec577bb1409a27c373f83.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (7).pdf",
+        "contentType": "application/pdf",
+        "size": 211630,
+        "sha256": "c4425294b523287814f4dc0952db4296d215d84f412ec577bb1409a27c373f83",
+        "uploadedAt": "2026-08-02T10:34:11.116Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-01-29",
+      "formattedDate": "29 Jan 2026"
+    },
+    "rep_1785666896614_juto": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "29/01/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
+      "clinical_summary": "Serum electrolyte evaluation reveals high potassium levels (hyperkalemia) alongside low carbondioxide and bicarbonate levels, indicating potential acid-base imbalance/metabolic acidosis.",
+      "tests": [
+        {
+          "name": "Sodium (Na)",
+          "value": "136.00",
+          "unit": "mmol/L",
+          "reference_range": "136.0 - 145.0",
+          "is_abnormal": false,
+          "category": "Biochemistry"
+        },
+        {
+          "name": "Potassium (K)",
+          "value": "6.85",
+          "unit": "mmol/L",
+          "reference_range": "3.50 - 5.10",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        },
+        {
+          "name": "Chloride (Cl)",
+          "value": "106.20",
+          "unit": "mmol/L",
+          "reference_range": "98.00 - 107.00",
+          "is_abnormal": false,
+          "category": "Biochemistry"
+        },
+        {
+          "name": "Carbondioxide (CO2)",
+          "value": "18.00",
+          "unit": "mmol/L",
+          "reference_range": "24.00 - 30.00",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        },
+        {
+          "name": "Bicarbonate (HCO3)",
+          "value": "16.00",
+          "unit": "mmol/L",
+          "reference_range": "22.00 - 28.00",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/785ad4cd5e3bb607718ce34a54e4ad0ed2fa575fb2ab81b8a67c11468de283ae.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (6).pdf",
+        "contentType": "application/pdf",
+        "size": 277235,
+        "sha256": "785ad4cd5e3bb607718ce34a54e4ad0ed2fa575fb2ab81b8a67c11468de283ae",
+        "uploadedAt": "2026-08-02T10:34:47.098Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-01-29",
+      "formattedDate": "29 Jan 2026"
+    },
+    "rep_1785666922628_d35e": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "30/01/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
+      "clinical_summary": "Magnesium level is within normal limits at 1.80 mg/dL.",
+      "tests": [
+        {
+          "name": "Magnesium",
+          "value": "1.80",
+          "unit": "mg/dL",
+          "reference_range": "1.60 - 2.30",
+          "is_abnormal": false,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/75bb3f2cde55f89fc7f649f48e87b4384940d03284161102ed03d35ba0681055.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (5).pdf",
+        "contentType": "application/pdf",
+        "size": 187337,
+        "sha256": "75bb3f2cde55f89fc7f649f48e87b4384940d03284161102ed03d35ba0681055",
+        "uploadedAt": "2026-08-02T10:35:14.876Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-01-30",
+      "formattedDate": "30 Jan 2026"
+    },
+    "rep_1785667132455_hq43": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "29/01/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. MD. OMAR FAROQUE",
+      "clinical_summary": "Urine Routine Examination shows presence of trace albumin. Physical, chemical, and microscopic findings are otherwise unremarkable.",
+      "tests": [
+        {
+          "name": "Quantity",
+          "value": "30 mL received (Approximate)",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Color",
+          "value": "Straw",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Appearance",
+          "value": "Clear",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Sediment",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Urine for Specific Gravity",
+          "value": "1.010",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Reaction (PH)",
+          "value": "7.50",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Albumin",
+          "value": "Trace",
+          "unit": null,
+          "reference_range": "Nil",
+          "is_abnormal": true,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Sugar",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Phosphate",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Bilirubin",
+          "value": "Negative",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Urobilinogen",
+          "value": "Normal",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Nitrite",
+          "value": "Absent",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Ketone",
+          "value": "Absent",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Epithelial Cells",
+          "value": "1-2",
+          "unit": "/HPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "RBC",
+          "value": "Nil",
+          "unit": "/HPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Pus Cells",
+          "value": "2-4",
+          "unit": "/HPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Cellular Cast",
+          "value": "Nil",
+          "unit": "/LPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Granular Casts",
+          "value": "Nil",
+          "unit": "/LPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Hyaline Casts",
+          "value": "Nil",
+          "unit": "/LPF",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Calcium Oxalate",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Triple Phosphate",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Uric Acid",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Amorphous Phosphate",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        },
+        {
+          "name": "Urates",
+          "value": "Nil",
+          "unit": null,
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Urine Routine Examination"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/ea6e2797561770e7d2ef96a23e9ce351a18354ce5622f1236f648760e355139f.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (4).pdf",
+        "contentType": "application/pdf",
+        "size": 211667,
+        "sha256": "ea6e2797561770e7d2ef96a23e9ce351a18354ce5622f1236f648760e355139f",
+        "uploadedAt": "2026-08-02T10:38:39.421Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-01-29",
+      "formattedDate": "29 Jan 2026"
+    },
+    "rep_1785667172918_ohed": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "21/07/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
+      "clinical_summary": "The CBC reveals mild-to-moderate normocytic anemia indicated by low Red Blood Cells (3.01 million/µl), Haemoglobin (9.80 g/dL), and HCT (28.80%). Thrombocytopenia is also present with decreased Platelets (120 K/µL) and slightly elevated MPV (9.50 fl). Total and differential WBC counts are within normal limits.",
+      "tests": [
+        {
+          "name": "White Blood Cells",
+          "value": "5.00",
+          "unit": "K / µL",
+          "reference_range": "4.00 - 10.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Neutrophils",
+          "value": "3.25",
+          "unit": "K / µL",
+          "reference_range": "2.00 - 7.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Lymphocyte",
+          "value": "1.30",
+          "unit": "K / µL",
+          "reference_range": "1.00 - 3.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Monocyte",
+          "value": "0.25",
+          "unit": "K / µL",
+          "reference_range": "0.20 - 1.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Eosinophil",
+          "value": "0.20",
+          "unit": "K / µL",
+          "reference_range": "0.02 - 0.50",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Neutrophil%",
+          "value": "65",
+          "unit": "%",
+          "reference_range": "40.00 - 80.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Lymphocyte%",
+          "value": "26",
+          "unit": "%",
+          "reference_range": "20.00 - 40.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Monocyte%",
+          "value": "05",
+          "unit": "%",
+          "reference_range": "2.00 - 10.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Eosinophil%",
+          "value": "04",
+          "unit": "%",
+          "reference_range": "1.00 - 6.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Basophil%",
+          "value": "00",
+          "unit": "%",
+          "reference_range": "<1-2",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Red Blood Cells",
+          "value": "3.01",
+          "unit": "million/µl",
+          "reference_range": "3.80 - 4.80",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "Haemoglobin",
+          "value": "9.80",
+          "unit": "g/dL",
+          "reference_range": "12.00 - 15.00",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "HCT",
+          "value": "28.80",
+          "unit": "%",
+          "reference_range": "34.80 - 45.00",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCV",
+          "value": "95.7",
+          "unit": "fl",
+          "reference_range": "79 - 96",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCH",
+          "value": "32.6",
+          "unit": "pg",
+          "reference_range": "26 - 33",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCHC",
+          "value": "34.0",
+          "unit": "g/dL",
+          "reference_range": "32 - 36",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "RDW-CV(%)",
+          "value": "13.9",
+          "unit": "%",
+          "reference_range": "11 - 15",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Platelets",
+          "value": "120",
+          "unit": "K / µL",
+          "reference_range": "150 - 410",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MPV",
+          "value": "9.50",
+          "unit": "fl",
+          "reference_range": "6.30 - 9.10",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "PCT",
+          "value": "0.11",
+          "unit": "%",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "PDW",
+          "value": "8.90",
+          "unit": "fl",
+          "reference_range": null,
+          "is_abnormal": false,
+          "category": "Hematology"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/93b8af78be6d95fe94a73a13743d64d095e5b588e716e4397d59ba13c20e6677.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult.pdf",
+        "contentType": "application/pdf",
+        "size": 217935,
+        "sha256": "93b8af78be6d95fe94a73a13743d64d095e5b588e716e4397d59ba13c20e6677",
+        "uploadedAt": "2026-08-02T10:39:18.527Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-07-21",
+      "formattedDate": "21 Jul 2026"
+    },
+    "rep_1785667212430_rx8p": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "21/07/2026",
+      "lab_name": "Popular Diagnostic Centre Ltd.",
+      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
+      "clinical_summary": "Serum Creatinine is elevated at 1.84 mg/dL, exceeding the female reference range of 0.50 - 0.90 mg/dL.",
+      "tests": [
+        {
+          "name": "Serum Creatinine",
+          "value": "1.84",
+          "unit": "mg/dL",
+          "reference_range": "0.50 - 0.90",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/e9d49bd4555c0fff066d50102050a893f8bc6b7ad4e33ed22cd1d6157cfdb0e2.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (1).pdf",
+        "contentType": "application/pdf",
+        "size": 178054,
+        "sha256": "e9d49bd4555c0fff066d50102050a893f8bc6b7ad4e33ed22cd1d6157cfdb0e2",
+        "uploadedAt": "2026-08-02T10:39:58.711Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-07-21",
+      "formattedDate": "21 Jul 2026"
+    },
+    "rep_1785667242391_hmrv": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "21/07/2026",
+      "lab_name": "Popular Diagnostic Centre Ltd.",
+      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
+      "clinical_summary": "Serum electrolytes panel indicates decreased levels of Carbondioxide (20.00 mmol/L) and Bicarbonate (18.00 mmol/L). Sodium, Potassium, and Chloride levels are within normal reference ranges.",
+      "tests": [
+        {
+          "name": "Sodium (Na)",
+          "value": "137.00",
+          "unit": "mmol/L",
+          "reference_range": "136.0 - 145.0",
+          "is_abnormal": false,
+          "category": "Electrolytes"
+        },
+        {
+          "name": "Potassium (K)",
+          "value": "4.67",
+          "unit": "mmol/L",
+          "reference_range": "3.50 - 5.10",
+          "is_abnormal": false,
+          "category": "Electrolytes"
+        },
+        {
+          "name": "Chloride (Cl)",
+          "value": "104.30",
+          "unit": "mmol/L",
+          "reference_range": "98.00 - 107.00",
+          "is_abnormal": false,
+          "category": "Electrolytes"
+        },
+        {
+          "name": "Carbondioxide (CO2)",
+          "value": "20.00",
+          "unit": "mmol/L",
+          "reference_range": "24.00 - 30.00",
+          "is_abnormal": true,
+          "category": "Electrolytes"
+        },
+        {
+          "name": "Bicarbonate (HCO3)",
+          "value": "18.00",
+          "unit": "mmol/L",
+          "reference_range": "22.00 - 28.00",
+          "is_abnormal": true,
+          "category": "Electrolytes"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/27cf1e97e510b6c8835127b086af934fa99fab4d2b7eeb7745496195500c6b20.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (2).pdf",
+        "contentType": "application/pdf",
+        "size": 240127,
+        "sha256": "27cf1e97e510b6c8835127b086af934fa99fab4d2b7eeb7745496195500c6b20",
+        "uploadedAt": "2026-08-02T10:40:32.044Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-07-21",
+      "formattedDate": "21 Jul 2026"
+    },
+    "rep_1785667273944_e7se": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "21/07/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
+      "clinical_summary": "Serum calcium level is normal at 9.15 mg/dL.",
+      "tests": [
+        {
+          "name": "Calcium",
+          "value": "9.15",
+          "unit": "mg/dL",
+          "reference_range": "8.80-10.60",
+          "is_abnormal": false,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/5040d39222de08cbe90a2b85497ed9d6228928001896c487ceff974d17af36d4.pdf",
+        "bucket": "meditracker-dev",
+        "filename": "LabResult (3).pdf",
+        "contentType": "application/pdf",
+        "size": 235605,
+        "sha256": "5040d39222de08cbe90a2b85497ed9d6228928001896c487ceff974d17af36d4",
+        "uploadedAt": "2026-08-02T10:41:07.137Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-07-21",
+      "formattedDate": "21 Jul 2026"
+    },
+    "rep_1785667407718_k5st": {
+      "patient_name": "Parul Islam",
+      "patient_id": "D198349",
+      "date": "22-May-2026",
+      "lab_name": "A.B. SIDDIQUE GENERAL HOSPITAL & DIAGNOSTIC CENTER",
+      "doctor_name": "Dr. Mahabub Alam (Mirza) MBBS,BCS.",
+      "clinical_summary": "The patient presents with anemia (low Hemoglobin 9.4 g/dL, low RBC 3.12 m/uL, low HCT 29.1%), significantly elevated ESR (132 mm/hr), leukocytosis (WBC 15,000 /cumm), and mild lymphopenia (18%). Other platelet parameters are generally within expected limits.",
+      "tests": [
+        {
+          "name": "Hemoglobin(Hb%)",
+          "value": "9.4",
+          "unit": "g/dL",
+          "reference_range": "11.5-16.5 g/dL",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "ESR (Automated)",
+          "value": "132",
+          "unit": "mm.",
+          "reference_range": "0-20.0 mm",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "White Blood Cells (WBCs)",
+          "value": "15,000",
+          "unit": "/cumm",
+          "reference_range": "4,000 - 11,000 /cumm",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "Red Blood Cells (RBCs)",
+          "value": "3.12",
+          "unit": "m/uL",
+          "reference_range": "3.8-5.8 m/uL",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "Platelet (PLT)",
+          "value": "183,000",
+          "unit": "/cumm",
+          "reference_range": "1,50,000-4,50,000 /cumm",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Neutrophils",
+          "value": "66",
+          "unit": "%",
+          "reference_range": "40 - 70 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Lymphocytes",
+          "value": "18",
+          "unit": "%",
+          "reference_range": "20-40 %",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "Monocytes",
+          "value": "05",
+          "unit": "%",
+          "reference_range": "02-10 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Eosinophils",
+          "value": "02",
+          "unit": "%",
+          "reference_range": "01-06 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Basophil",
+          "value": "00",
+          "unit": "%",
+          "reference_range": "00- 01 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "HCT/PCV",
+          "value": "29.1",
+          "unit": "%",
+          "reference_range": "37-47 %",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCV",
+          "value": "93.3",
+          "unit": "fL",
+          "reference_range": "78-98 fL",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCH",
+          "value": "30.0",
+          "unit": "pg",
+          "reference_range": "27-32 pg",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCHC",
+          "value": "32.3",
+          "unit": "g/dL",
+          "reference_range": "29-34 g/dL",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "RDW SD",
+          "value": "54.8",
+          "unit": "fL",
+          "reference_range": "42.5 (+_ ) 3.5 fL",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "RDW CV",
+          "value": "0.15",
+          "unit": "%",
+          "reference_range": "12.8 (+_ ) 1.2 %",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MPV",
+          "value": "11.6",
+          "unit": "fL",
+          "reference_range": "9.0 -13.0 fL",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "P-LCC",
+          "value": "69.0",
+          "unit": null,
+          "reference_range": "10^9/L",
+          "is_abnormal": null,
+          "category": "Hematology"
+        },
+        {
+          "name": "P-LCR",
+          "value": "37.7",
+          "unit": "%",
+          "reference_range": "13- 43 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "PDW",
+          "value": "16.4",
+          "unit": "%",
+          "reference_range": "09 - 17 % fL",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "PCT",
+          "value": "0.21",
+          "unit": "%",
+          "reference_range": "<= 09 %",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "T.Cir.Eosinophil Count (TCE)",
+          "value": "300",
+          "unit": "/cumm",
+          "reference_range": "50 - 400 /cumm",
+          "is_abnormal": false,
+          "category": "Hematology"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/40db88c98337874c89a443e50f5ba4630175179653b5b5e7c3976961640a7fdc.jpg",
+        "bucket": "meditracker-dev",
+        "filename": "6aaa0f18-e4ae-4da6-827f-b6a871b722e6.jpeg",
+        "contentType": "image/jpeg",
+        "size": 193125,
+        "sha256": "40db88c98337874c89a443e50f5ba4630175179653b5b5e7c3976961640a7fdc",
+        "uploadedAt": "2026-08-02T10:43:07.407Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-05-22",
+      "formattedDate": "22 May 2026"
+    },
+    "rep_1785667458940_wm88": {
+      "patient_name": "PARUL ISLAM",
+      "patient_id": "D198349",
+      "date": "22-May-2026",
+      "lab_name": "SIDDIQUE GENERAL HOSPITAL & DIAGNOSTIC CENTER",
+      "doctor_name": "Dr. Mahabub Alam ( Mirza ) MBBS,BCS.",
+      "clinical_summary": "Serum Creatinine level is 0.50 mg/dL, which is slightly below the reference range for females (0.55 - 1.20 mg/dL).",
+      "tests": [
+        {
+          "name": "S.Creatinine",
+          "value": "0.50",
+          "unit": "mg/dL",
+          "reference_range": "Female: 0.55 - 1.20",
+          "is_abnormal": true,
+          "category": "Biochemistry"
+        }
+      ],
+      "source_file": {
+        "backend": "s3",
+        "path": "users/D198349/originals/18da0e424a6edc4bd802fa11f4284286f1f7b23c2c96bae473c8e68104fee558.jpg",
+        "bucket": "meditracker-dev",
+        "filename": "17f58d13-cf8c-45b6-8375-bf1243306c7c.jpeg",
+        "contentType": "image/jpeg",
+        "size": 115984,
+        "sha256": "18da0e424a6edc4bd802fa11f4284286f1f7b23c2c96bae473c8e68104fee558",
+        "uploadedAt": "2026-08-02T10:44:08.769Z",
+        "extractorModel": "gemini-3.6-flash"
+      },
+      "reportDate": "2026-05-22",
+      "formattedDate": "22 May 2026"
     }
   }
 }
