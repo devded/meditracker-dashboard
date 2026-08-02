@@ -82,8 +82,7 @@ function saveToLocalDisk(buffer: Buffer, relativePath: string): void {
  * degraded extraction still leaves the source available to retry against.
  *
  * Writes to Tigris object storage when credentials are present and the bucket is
- * reachable, otherwise falls back to the server-local data directory (mirrors the
- * Firestore -> local-store fallback used for the structured data).
+ * reachable, otherwise falls back to the server-local data directory.
  */
 export async function saveOriginalFile(params: {
   buffer: Buffer;
