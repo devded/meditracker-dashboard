@@ -24,6 +24,7 @@ import {
   ArrowLeft,
   Search,
   Download,
+  FileSearch,
   Stethoscope,
   Building2,
   Calendar,
@@ -201,6 +202,18 @@ export default function ReportDetailPage() {
         </Button>
         
         <div className="flex items-center gap-2">
+          {report.originalFile && (
+            <a
+              href={`/api/reports/${report.id}/original?uuid=${encodeURIComponent(patientUuid)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs font-bold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors shadow-xs"
+              title={report.originalFile.filename}
+            >
+              <FileSearch className="h-3.5 w-3.5 text-emerald-500" /> View Source Document
+            </a>
+          )}
+
           <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
             <Download className="h-3.5 w-3.5" /> Export CSV Data
           </Button>

@@ -93,10 +93,10 @@ export function UploadDialog({ open, onOpenChange, trigger }: UploadDialogProps)
 
     try {
       setProgress(35);
-      setStatusMessage('Extracting text & quantitative parameters with Gemini 3.6 Flash...');
-      
-      const extractedResult = await extractReportFromFile(file);
-      
+      setStatusMessage('Archiving original document & extracting parameters with Gemini 3.6 Flash...');
+
+      const extractedResult = await extractReportFromFile(file, activeUuid);
+
       setProgress(75);
       setStatusMessage('Persisting extracted report payload into Cloud Firestore...');
 

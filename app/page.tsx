@@ -21,7 +21,8 @@ import { usePatientUuid } from '@/lib/patient-uuid';
 import { BiomarkerTimelineChart } from '@/features/dashboard/biomarker-timeline-chart';
 import { BiomarkerComparisonRangeChart } from '@/features/dashboard/biomarker-comparison-range-chart';
 
-const QUICK_BIOMARKERS = [
+// Preferred ordering only — the actual chips are derived from the patient's own reports.
+const PREFERRED_BIOMARKERS = [
   'Cholesterol',
   'Glucose',
   'Creatinine',
@@ -32,11 +33,13 @@ const QUICK_BIOMARKERS = [
   'Total WBC',
 ];
 
+const QUICK_BIOMARKER_LIMIT = 8;
+
 export default function DashboardPage() {
   const [patientUuid] = usePatientUuid();
   const [reports, setReports] = React.useState<Report[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [activeBiomarker, setActiveBiomarker] = React.useState('Cholesterol');
+  const [activeBiomarker, setActiveBiomarker] = React.useState('');
 
   React.useEffect(() => {
     setLoading(true);
@@ -45,6 +48,32 @@ export default function DashboardPage() {
       setLoading(false);
     });
   }, [patientUuid]);
+
+  // Quick-select chips built from the biomarkers this patient actually has,
+  // ordered by preferred clinical panel first, then by how often they recur across reports.
+  const quickBiomarkers = React.useMemo(() => {
+    const counts: Record<string, number> = {};
+    reports.forEach((r) => {
+      r.tests.forEach((t) => {
+        counts[t.name] = (counts[t.name] || 0) + 1;
+      });
+    });
+
+    const available = Object.keys(counts);
+    const preferred = PREFERRED_BIOMARKERS.filter((name) => available.includes(name));
+    const rest = available
+      .filter((name) => !preferred.includes(name))
+      .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+
+    return [...preferred, ...rest].slice(0, QUICK_BIOMARKER_LIMIT);
+  }, [reports]);
+
+  // Resolve during render so the selection always points at a biomarker the patient
+  // actually has — reports arrive after the first paint, and they can be deleted.
+  const selectedBiomarker =
+    activeBiomarker && quickBiomarkers.includes(activeBiomarker)
+      ? activeBiomarker
+      : quickBiomarkers[0] ?? '';
 
   const stats = React.useMemo(() => {
     if (!reports || reports.length === 0) {
@@ -201,8 +230,13 @@ export default function DashboardPage() {
           <span className="text-[11px] font-mono text-muted-foreground">Click to load in timeline</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {QUICK_BIOMARKERS.map((name) => {
-            const isActive = activeBiomarker === name;
+          {quickBiomarkers.length === 0 && (
+            <span className="text-[11px] font-mono text-muted-foreground">
+              No biomarkers recorded yet — upload a report to populate the timeline.
+            </span>
+          )}
+          {quickBiomarkers.map((name) => {
+            const isActive = selectedBiomarker === name;
             return (
               <button
                 key={name}
@@ -223,7 +257,7 @@ export default function DashboardPage() {
       {/* 4. Biomarker Timeline Chart */}
       <BiomarkerTimelineChart
         reports={reports}
-        selectedBiomarker={activeBiomarker}
+        selectedBiomarker={selectedBiomarker}
         onSelectBiomarker={(b) => setActiveBiomarker(b)}
       />
 

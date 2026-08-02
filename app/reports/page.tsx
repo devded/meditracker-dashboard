@@ -15,7 +15,7 @@ import {
   FileText,
   Search,
   Eye,
-  Download,
+  FileSearch,
   Plus,
   CheckCircle2,
   AlertTriangle,
@@ -152,12 +152,6 @@ function ReportsContent() {
     
     return groups;
   }, [filteredReports]);
-
-  const handleNoOpAction = (actionName: string, reportId: string) => {
-    toast.info(`${actionName} action triggered`, {
-      description: `Report ${reportId} export options generated.`,
-    });
-  };
 
   return (
     <div className="space-y-6 pb-12">
@@ -341,13 +335,25 @@ function ReportsContent() {
                             </button>
                           </Link>
 
-                          <button
-                            onClick={() => handleNoOpAction('Download PDF', report.id)}
-                            className="size-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
-                            title="Download PDF"
-                          >
-                            <Download className="size-3.5" />
-                          </button>
+                          {report.originalFile ? (
+                            <a
+                              href={`/api/reports/${report.id}/original?uuid=${encodeURIComponent(patientUuid)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="size-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center justify-center transition-colors"
+                              title={`View source document (${report.originalFile.filename})`}
+                            >
+                              <FileSearch className="size-3.5 text-emerald-500" />
+                            </a>
+                          ) : (
+                            <button
+                              disabled
+                              className="size-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-muted-foreground/40 flex items-center justify-center cursor-not-allowed"
+                              title="No source document archived for this report"
+                            >
+                              <FileSearch className="size-3.5" />
+                            </button>
+                          )}
 
                           <button
                             onClick={() => handleDeleteReport(report.id, report.labName)}
