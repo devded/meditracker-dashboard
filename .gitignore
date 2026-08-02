@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase Service Account Credentials
+meditracker-dev-cfaed-*.json
+*.pem
+.env.local

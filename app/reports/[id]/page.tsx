@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getReportById } from '@/services/report-service';
-import { Report, Test } from '@/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { getReportById, removeReport } from '@/services/report-service';
+import { Report } from '@/types';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -22,27 +22,31 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
   ArrowLeft,
-  FileText,
   Search,
   Download,
+  FileSearch,
   Stethoscope,
   Building2,
   Calendar,
-  User,
   CheckCircle2,
   AlertTriangle,
-  Layers,
   ArrowUpDown,
+  User,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePatientUuid } from '@/lib/patient-uuid';
 
 export default function ReportDetailPage() {
+  const [patientUuid] = usePatientUuid();
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
 
   const [report, setReport] = React.useState<Report | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [filterAbnormal, setFilterAbnormal] = React.useState<boolean>(false);
@@ -51,12 +55,37 @@ export default function ReportDetailPage() {
 
   React.useEffect(() => {
     if (id) {
-      getReportById(id).then((data) => {
+      setLoading(true);
+      getReportById(id, patientUuid).then((data) => {
         setReport(data);
         setLoading(false);
       });
     }
-  }, [id]);
+  }, [id, patientUuid]);
+
+  const handleDelete = async () => {
+    if (!report) return;
+    if (!window.confirm(`Are you sure you want to delete this report from ${report.labName}?`)) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const success = await removeReport(id, patientUuid);
+      if (success) {
+        toast.success('Report Deleted', {
+          description: `Removed report from Cloud Firestore for Patient UUID: ${patientUuid}`,
+        });
+        router.push('/reports');
+      } else {
+        toast.error('Failed to Delete Report');
+      }
+    } catch (err: any) {
+      toast.error('Error deleting report', { description: err?.message });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const categories = React.useMemo(() => {
     if (!report) return [];
@@ -127,12 +156,12 @@ export default function ReportDetailPage() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-32" />
-        <Skeleton className="h-44 w-full rounded-2xl" />
+        <Skeleton className="h-44 w-full rounded-3xl" />
         <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-[280px] rounded-xl" />
-          <Skeleton className="h-[280px] rounded-xl" />
+          <Skeleton className="h-[280px] rounded-3xl" />
+          <Skeleton className="h-[280px] rounded-3xl" />
         </div>
-        <Skeleton className="h-80 w-full rounded-xl" />
+        <Skeleton className="h-80 w-full rounded-3xl" />
       </div>
     );
   }
@@ -141,8 +170,8 @@ export default function ReportDetailPage() {
     return (
       <div className="text-center p-12 space-y-4">
         <h2 className="text-xl font-bold">Report Not Found</h2>
-        <p className="text-sm text-muted-foreground">The requested diagnostic report ID does not exist.</p>
-        <Button onClick={() => router.push('/reports')}>Back to Reports</Button>
+        <p className="text-sm text-muted-foreground">The requested diagnostic report ID does not exist for Patient UUID: {patientUuid}.</p>
+        <Button onClick={() => router.push('/reports')} className="rounded-xl">Back to Reports</Button>
       </div>
     );
   }
@@ -150,202 +179,226 @@ export default function ReportDetailPage() {
   const abnormalCount = report.tests.filter((t) => t.isAbnormal).length;
   const normalCount = report.tests.length - abnormalCount;
 
-  // Chart configs
   const statusData = [
-    { name: 'Normal', count: normalCount, fill: 'var(--chart-2)' },
-    { name: 'Abnormal', count: abnormalCount, fill: 'var(--chart-5)' },
+    { name: 'Normal', count: normalCount, fill: '#10b981' },
+    { name: 'Abnormal', count: abnormalCount, fill: '#f43f5e' },
   ];
 
-  const categoryBreakdown = categories.map((cat, idx) => ({
+  const categoryBreakdown = categories.map((cat) => ({
     category: cat,
     count: report.tests.filter((t) => t.category === cat).length,
-    fill: `var(--chart-${(idx % 5) + 1})`,
   }));
 
   const chartConfig = {
-    count: { label: 'Biomarkers', color: 'var(--chart-1)' },
+    count: { label: 'Biomarkers', color: '#0d9488' },
   } satisfies ChartConfig;
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Back Button */}
+    <div className="space-y-6 pb-12">
+      {/* Back Button & Actions */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/reports')} className="gap-1.5 text-xs">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/reports')} className="gap-1.5 text-xs rounded-xl font-semibold">
           <ArrowLeft className="h-4 w-4" /> Back to Reports List
         </Button>
-        <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs">
-          <Download className="h-3.5 w-3.5" /> Export CSV Data
-        </Button>
+        
+        <div className="flex items-center gap-2">
+          {report.originalFile && (
+            <a
+              href={`/api/reports/${report.id}/original?uuid=${encodeURIComponent(patientUuid)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs font-bold text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors shadow-xs"
+              title={report.originalFile.filename}
+            >
+              <FileSearch className="h-3.5 w-3.5 text-emerald-500" /> View Source Document
+            </a>
+          )}
+
+          <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
+            <Download className="h-3.5 w-3.5" /> Export CSV Data
+          </Button>
+
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="gap-1.5 text-xs rounded-xl font-semibold bg-rose-600 hover:bg-rose-700 h-9"
+          >
+            {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+            Delete Report
+          </Button>
+        </div>
       </div>
 
-      {/* Patient & Report Banner */}
-      <Card className="shadow-xs border-border/80 overflow-hidden bg-card">
-        <CardHeader className="bg-muted/30 border-b border-border/60 pb-4">
+      {/* Patient & Report Banner Card */}
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg font-bold">{report.labName}</CardTitle>
+                <Building2 className="h-5 w-5 text-emerald-500" />
+                <h1 className="text-xl font-extrabold text-foreground font-sans">{report.labName}</h1>
               </div>
-              <CardDescription className="text-xs mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Attending Physician: <span className="font-semibold text-foreground">{report.doctorName}</span>
-              </CardDescription>
+              </p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="font-mono text-xs border-primary/30 text-primary">
-                <Calendar className="h-3 w-3 mr-1" /> {report.formattedDate}
+              <Badge variant="outline" className="font-mono text-xs rounded-full border-zinc-200 dark:border-zinc-800 text-foreground px-3 py-1">
+                <Calendar className="h-3 w-3 mr-1.5 text-emerald-500" /> {report.formattedDate}
               </Badge>
-              <Badge variant="secondary" className="font-mono text-xs">
-                ID: {report.patientId}
+              <Badge variant="secondary" className="font-mono text-xs rounded-full px-3 py-1">
+                <User className="h-3 w-3 mr-1 text-emerald-500" /> Patient UUID: {report.patientId}
               </Badge>
             </div>
           </div>
-        </CardHeader>
+        </div>
 
-        <CardContent className="p-6 space-y-4">
+        <CardContent className="p-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60">
-              <p className="text-[11px] text-muted-foreground uppercase font-mono">Patient Name</p>
-              <p className="text-base font-bold font-mono mt-0.5">{report.patientName}</p>
+            <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+              <p className="text-[11px] text-muted-foreground uppercase font-mono font-semibold">Patient Name</p>
+              <p className="text-base font-extrabold font-mono text-foreground mt-0.5">{report.patientName}</p>
             </div>
-            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 uppercase font-mono">Normal Tests</p>
-              <p className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">{normalCount}</p>
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/40">
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 uppercase font-mono font-semibold">Normal Tests</p>
+              <p className="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">{normalCount}</p>
             </div>
-            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20">
-              <p className="text-[11px] text-rose-600 dark:text-rose-400 uppercase font-mono">Abnormal Flags</p>
-              <p className="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-0.5">{abnormalCount}</p>
+            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/40">
+              <p className="text-[11px] text-rose-600 dark:text-rose-400 uppercase font-mono font-semibold">Abnormal Flags</p>
+              <p className="text-xl font-extrabold font-mono text-rose-600 dark:text-rose-400 mt-0.5">{abnormalCount}</p>
             </div>
-            <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20">
-              <p className="text-[11px] text-primary uppercase font-mono">Total Panel Tests</p>
-              <p className="text-xl font-bold font-mono text-primary mt-0.5">{report.tests.length}</p>
+            <div className="p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <p className="text-[11px] text-muted-foreground uppercase font-mono font-semibold">Total Panel Tests</p>
+              <p className="text-xl font-extrabold font-mono text-foreground mt-0.5">{report.tests.length}</p>
             </div>
           </div>
 
           {/* Clinical Summary */}
-          <div className="rounded-xl bg-muted/60 p-4 border border-border/60 space-y-1">
-            <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-              <Stethoscope className="h-4 w-4 text-primary" />
-              <span>Clinical Summary & Observations</span>
+          {report.clinicalSummary && (
+            <div className="rounded-2xl bg-zinc-50 dark:bg-zinc-900 p-4 border border-zinc-100 dark:border-zinc-800 space-y-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                <Stethoscope className="h-4 w-4 text-emerald-500" />
+                <span>Clinical Summary & Observations</span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {report.clinicalSummary}
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {report.clinicalSummary}
-            </p>
-          </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Per-Report Charts */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Normal vs Abnormal Chart */}
-        <Card className="shadow-xs border-border/80">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Test Status Distribution</CardTitle>
-            <CardDescription className="text-xs">Normal range vs abnormal flag ratio</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-2 shadow-xs rounded-3xl">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Test Status Distribution</h3>
+            <p className="text-xs text-muted-foreground">Normal range vs abnormal flag ratio</p>
+          </div>
+          <div className="h-[200px] w-full pt-2">
+            <ChartContainer config={chartConfig} className="h-full w-full">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-                <Pie data={statusData} dataKey="count" nameKey="name" innerRadius={45} outerRadius={70} strokeWidth={2}>
+                <Pie data={statusData} dataKey="count" nameKey="name" innerRadius={45} outerRadius={70} paddingAngle={4}>
                   {statusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                    <Cell key={`cell-${index}`} fill={entry.fill} stroke="none" />
                   ))}
                 </Pie>
               </PieChart>
             </ChartContainer>
-          </CardContent>
+          </div>
         </Card>
 
         {/* Category Breakdown Chart */}
-        <Card className="shadow-xs border-border/80">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Category Breakdown</CardTitle>
-            <CardDescription className="text-xs">Biomarkers grouped by medical specialty</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-2 shadow-xs rounded-3xl">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Category Breakdown</h3>
+            <p className="text-xs text-muted-foreground">Biomarkers grouped by medical specialty</p>
+          </div>
+          <div className="h-[200px] w-full pt-2">
+            <ChartContainer config={chartConfig} className="h-full w-full">
               <BarChart data={categoryBreakdown} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-border/40" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-zinc-200/60 dark:stroke-zinc-800/60" />
                 <XAxis dataKey="category" tickLine={false} axisLine={false} className="text-[10px] text-muted-foreground font-mono" />
                 <YAxis tickLine={false} axisLine={false} className="text-[10px] text-muted-foreground font-mono" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#0d9488" radius={[4, 4, 0, 0]} barSize={20} />
               </BarChart>
             </ChartContainer>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
       {/* Tests Data Table */}
-      <Card className="shadow-xs border-border/80">
-        <CardHeader className="pb-3 border-b border-border/60">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-base font-semibold">Individual Test Results</CardTitle>
-              <CardDescription className="text-xs">
-                Detailed quantitative breakdown parsed from lab report payload.
-              </CardDescription>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
-                <Input
-                  placeholder="Filter test name..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 text-xs h-8 w-[180px]"
-                />
-              </div>
-
-              <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val || 'all')}>
-                <SelectTrigger className="h-8 w-[140px] text-xs">
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all" className="text-xs">All Categories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat} className="text-xs">
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Button
-                variant={filterAbnormal ? 'destructive' : 'outline'}
-                size="sm"
-                onClick={() => setFilterAbnormal((prev) => !prev)}
-                className="h-8 text-xs gap-1"
-              >
-                <AlertTriangle className="h-3 w-3" />
-                {filterAbnormal ? 'Abnormal' : 'All Flags'}
-              </Button>
-            </div>
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl overflow-hidden p-0">
+        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-bold text-foreground">Individual Test Results</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Detailed quantitative breakdown parsed from lab report payload
+            </p>
           </div>
-        </CardHeader>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Filter test name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8 text-xs h-9 w-[180px] rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
+              />
+            </div>
+
+            <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val || 'all')}>
+              <SelectTrigger className="h-9 w-[140px] text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="all" className="text-xs">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat} className="text-xs">
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant={filterAbnormal ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterAbnormal((prev) => !prev)}
+              className="h-9 text-xs gap-1 rounded-xl font-semibold"
+            >
+              <AlertTriangle className="h-3.5 w-3.5" />
+              {filterAbnormal ? 'Abnormal' : 'All Flags'}
+            </Button>
+          </div>
+        </div>
 
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/40">
+              <TableHeader className="bg-zinc-50 dark:bg-zinc-900">
                 <TableRow>
-                  <TableHead>
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('name')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('name')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Biomarker Name <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
-                  <TableHead className="text-xs font-semibold">Observed Value</TableHead>
-                  <TableHead className="text-xs font-semibold">Unit</TableHead>
-                  <TableHead className="text-xs font-semibold">Standard Reference Range</TableHead>
-                  <TableHead>
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('category')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Observed Value</TableHead>
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Unit</TableHead>
+                  <TableHead className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Standard Reference Range</TableHead>
+                  <TableHead className="py-3.5 px-4">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('category')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Category <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
-                  <TableHead className="text-right pr-6">
-                    <Button variant="ghost" size="sm" onClick={() => toggleSort('status')} className="text-xs font-semibold p-0 h-auto gap-1">
+                  <TableHead className="py-3.5 px-4 text-right pr-6">
+                    <Button variant="ghost" size="sm" onClick={() => toggleSort('status')} className="text-xs font-bold uppercase tracking-wider p-0 h-auto gap-1 text-muted-foreground">
                       Status <ArrowUpDown className="h-3 w-3" />
                     </Button>
                   </TableHead>
@@ -360,32 +413,32 @@ export default function ReportDetailPage() {
                   </TableRow>
                 ) : (
                   filteredTests.map((test) => (
-                    <TableRow key={test.id} className="hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-semibold text-xs text-foreground">
+                    <TableRow key={test.id} className="hover:bg-zinc-50/60 dark:hover:bg-zinc-900/60 transition-colors">
+                      <TableCell className="py-3.5 px-4 font-bold text-sm text-foreground">
                         {test.name}
                       </TableCell>
-                      <TableCell className="font-mono text-xs font-bold text-foreground">
+                      <TableCell className="py-3.5 px-4 font-mono text-base font-extrabold text-foreground">
                         {test.rawValue}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground font-mono">
+                      <TableCell className="py-3.5 px-4 text-xs text-muted-foreground font-mono">
                         {test.unit || '—'}
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground font-mono">
+                      <TableCell className="py-3.5 px-4 text-xs text-muted-foreground font-mono">
                         {test.referenceRange ? test.referenceRange : '—'}
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-[10px] font-mono">
+                      <TableCell className="py-3.5 px-4">
+                        <Badge variant="outline" className="text-xs font-mono rounded-full border-zinc-200 dark:border-zinc-800">
                           {test.category}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right pr-6">
+                      <TableCell className="py-3.5 px-4 text-right pr-6">
                         {test.isAbnormal ? (
-                          <Badge variant="destructive" className="font-mono text-[10px] gap-1">
-                            <AlertTriangle className="h-3 w-3" /> Abnormal
+                          <Badge variant="destructive" className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
+                            <AlertTriangle className="h-3 w-3 mr-1" /> Abnormal
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20 gap-1">
-                            <CheckCircle2 className="h-3 w-3" /> Normal
+                          <Badge variant="secondary" className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none">
+                            <CheckCircle2 className="h-3 w-3 mr-1" /> Normal
                           </Badge>
                         )}
                       </TableCell>
