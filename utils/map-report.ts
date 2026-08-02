@@ -1,5 +1,6 @@
 import { ApiReport, Report, Test, ParsedApiResponse } from '@/types';
 import { parseValue } from './parse-value';
+import { canonicaliseBiomarker } from './canonicalise-biomarker';
 import { parse, format, isValid } from 'date-fns';
 
 /**
@@ -71,7 +72,7 @@ export function mapReport(rawInput: ApiReport | ParsedApiResponse | any, idOverr
 
   const tests: Test[] = rawTests.map((t, idx) => ({
     id: `test_${id}_${idx}`,
-    name: t.name,
+    name: canonicaliseBiomarker(t.name),
     value: parseValue(t.value),
     rawValue: t.value ?? '—',
     unit: t.unit ?? '',
