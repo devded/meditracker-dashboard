@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getReportById } from '@/services/report-service';
+import { getReportById, removeReport } from '@/services/report-service';
 import { Report } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -31,6 +31,8 @@ import {
   AlertTriangle,
   ArrowUpDown,
   User,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePatientUuid } from '@/lib/patient-uuid';
@@ -43,6 +45,7 @@ export default function ReportDetailPage() {
 
   const [report, setReport] = React.useState<Report | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
   const [filterAbnormal, setFilterAbnormal] = React.useState<boolean>(false);
@@ -58,6 +61,30 @@ export default function ReportDetailPage() {
       });
     }
   }, [id, patientUuid]);
+
+  const handleDelete = async () => {
+    if (!report) return;
+    if (!window.confirm(`Are you sure you want to delete this report from ${report.labName}?`)) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const success = await removeReport(id, patientUuid);
+      if (success) {
+        toast.success('Report Deleted', {
+          description: `Removed report from Cloud Firestore for Patient UUID: ${patientUuid}`,
+        });
+        router.push('/reports');
+      } else {
+        toast.error('Failed to Delete Report');
+      }
+    } catch (err: any) {
+      toast.error('Error deleting report', { description: err?.message });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const categories = React.useMemo(() => {
     if (!report) return [];
@@ -172,9 +199,23 @@ export default function ReportDetailPage() {
         <Button variant="ghost" size="sm" onClick={() => router.push('/reports')} className="gap-1.5 text-xs rounded-xl font-semibold">
           <ArrowLeft className="h-4 w-4" /> Back to Reports List
         </Button>
-        <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
-          <Download className="h-3.5 w-3.5" /> Export CSV Data
-        </Button>
+        
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={handleExportCSV} className="gap-1.5 text-xs shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
+            <Download className="h-3.5 w-3.5" /> Export CSV Data
+          </Button>
+
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="gap-1.5 text-xs rounded-xl font-semibold bg-rose-600 hover:bg-rose-700 h-9"
+          >
+            {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+            Delete Report
+          </Button>
+        </div>
       </div>
 
       {/* Patient & Report Banner Card */}

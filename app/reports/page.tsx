@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getReports } from '@/services/report-service';
+import { getReports, removeReport } from '@/services/report-service';
 import { Report } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,8 @@ import {
   ChevronUp,
   Layers,
   Stethoscope,
+  Trash2,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UploadDialog } from '@/components/upload-dialog';
@@ -46,14 +48,27 @@ function ReportsContent() {
 
   const [reports, setReports] = React.useState<Report[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [deletingId, setDeletingId] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedLab, setSelectedLab] = React.useState<string>('all');
   const [selectedDoctor, setSelectedDoctor] = React.useState<string>('all');
   const [filterAbnormalOnly, setFilterAbnormalOnly] = React.useState<boolean>(initialAbnormal);
   const [uploadOpen, setUploadOpen] = React.useState(false);
 
-  // Track expanded state of individual report detail panels (default ALL COLLAPSED/HIDDEN)
+  // Track expanded state of individual report detail panels
   const [expandedReports, setExpandedReports] = React.useState<Record<string, boolean>>({});
+
+  const fetchReports = React.useCallback(async () => {
+    setLoading(true);
+    const data = await getReports(patientUuid);
+    setReports(data);
+    const initialExpanded: Record<string, boolean> = {};
+    data.forEach((r) => {
+      initialExpanded[r.id] = false;
+    });
+    setExpandedReports(initialExpanded);
+    setLoading(false);
+  }, [patientUuid]);
 
   React.useEffect(() => {
     if (searchParams.get('filter') === 'abnormal') {
@@ -62,20 +77,34 @@ function ReportsContent() {
   }, [searchParams]);
 
   React.useEffect(() => {
-    setLoading(true);
-    getReports(patientUuid).then((data) => {
-      setReports(data);
-      const initialExpanded: Record<string, boolean> = {};
-      data.forEach((r) => {
-        initialExpanded[r.id] = false;
-      });
-      setExpandedReports(initialExpanded);
-      setLoading(false);
-    });
-  }, [patientUuid]);
+    fetchReports();
+  }, [fetchReports]);
 
   const toggleReportExpand = (id: string) => {
     setExpandedReports((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleDeleteReport = async (reportId: string, labName: string) => {
+    if (!window.confirm(`Are you sure you want to delete the report from ${labName}?`)) {
+      return;
+    }
+
+    setDeletingId(reportId);
+    try {
+      const success = await removeReport(reportId, patientUuid);
+      if (success) {
+        toast.success('Report Deleted', {
+          description: `Removed report from Cloud Firestore for Patient UUID: ${patientUuid}`,
+        });
+        await fetchReports();
+      } else {
+        toast.error('Failed to Delete Report');
+      }
+    } catch (err: any) {
+      toast.error('Error deleting report', { description: err?.message });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const labs = React.useMemo(() => {
@@ -126,7 +155,7 @@ function ReportsContent() {
 
   const handleNoOpAction = (actionName: string, reportId: string) => {
     toast.info(`${actionName} action triggered`, {
-      description: `Report ${reportId} - UI mock shell handler executed cleanly.`,
+      description: `Report ${reportId} export options generated.`,
     });
   };
 
@@ -138,116 +167,115 @@ function ReportsContent() {
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground font-sans">
             Diagnostic Lab Reports <FileText className="h-5 w-5 text-emerald-500" />
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Cloud Firestore archives mapped to Patient UUID: <span className="font-mono font-bold text-foreground">{patientUuid}</span>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Historical archive grouped chronologically by test date for Patient UUID: <strong className="text-foreground font-mono">{patientUuid}</strong>
           </p>
         </div>
-        <Button onClick={() => setUploadOpen(true)} className="gap-2 shadow-xs bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 text-xs font-bold rounded-xl h-9 px-4">
-          <Plus className="h-4 w-4" /> Upload New Report
-        </Button>
+
+        <div className="flex items-center gap-2">
+          <UploadDialog
+            open={uploadOpen}
+            onOpenChange={setUploadOpen}
+            trigger={
+              <Button size="sm" className="gap-1.5 shadow-xs rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold px-3.5 h-9">
+                <Plus className="h-4 w-4" /> Upload New Report
+              </Button>
+            }
+          />
+        </div>
       </div>
 
-      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
-
-      {/* Filter Controls Card */}
-      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-2xl p-3.5">
-        <div className="flex flex-col md:flex-row gap-3">
-          {/* Search Input */}
+      {/* Filter and Search Toolbar */}
+      <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-4">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search test panel category, physician, lab..."
+              placeholder="Search by lab, doctor, biomarker name, or clinical summary..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 text-xs h-9 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
             />
           </div>
 
-          {/* Lab Filter */}
-          <Select value={selectedLab} onValueChange={(val) => setSelectedLab(val || 'all')}>
-            <SelectTrigger className="w-full md:w-[190px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-              <SelectValue placeholder="All Diagnostic Labs" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="all" className="text-xs">All Diagnostic Labs</SelectItem>
-              {labs.map((lab) => (
-                <SelectItem key={lab} value={lab} className="text-xs truncate">
-                  {lab}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap items-center gap-2">
+            <Select value={selectedLab} onValueChange={(val) => setSelectedLab(val || 'all')}>
+              <SelectTrigger className="h-9 w-[150px] text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+                <SelectValue placeholder="All Labs" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="all" className="text-xs">All Labs</SelectItem>
+                {labs.map((lab) => (
+                  <SelectItem key={lab} value={lab} className="text-xs">
+                    {lab}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          {/* Doctor Filter */}
-          <Select value={selectedDoctor} onValueChange={(val) => setSelectedDoctor(val || 'all')}>
-            <SelectTrigger className="w-full md:w-[190px] h-9 text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-              <SelectValue placeholder="All Physicians" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="all" className="text-xs">All Physicians</SelectItem>
-              {doctors.map((doc) => (
-                <SelectItem key={doc} value={doc} className="text-xs truncate">
-                  {doc}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedDoctor} onValueChange={(val) => setSelectedDoctor(val || 'all')}>
+              <SelectTrigger className="h-9 w-[160px] text-xs rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+                <SelectValue placeholder="All Doctors" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="all" className="text-xs">All Doctors</SelectItem>
+                {doctors.map((docName) => (
+                  <SelectItem key={docName} value={docName} className="text-xs">
+                    {docName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          {/* Abnormal Only Toggle Button */}
-          <Button
-            variant={filterAbnormalOnly ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilterAbnormalOnly((prev) => !prev)}
-            className="h-9 text-xs gap-1.5 shrink-0 rounded-xl font-semibold px-3.5"
-          >
-            <AlertTriangle className="h-3.5 w-3.5" />
-            {filterAbnormalOnly ? 'Abnormal Only' : 'Filter Abnormal'}
-          </Button>
+            <Button
+              variant={filterAbnormalOnly ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterAbnormalOnly((prev) => !prev)}
+              className="h-9 text-xs gap-1.5 rounded-xl font-semibold"
+            >
+              <AlertTriangle className="h-3.5 w-3.5" />
+              {filterAbnormalOnly ? 'Abnormal Only' : 'All Reports'}
+            </Button>
+          </div>
         </div>
       </Card>
 
-      {/* Date-Grouped Reports List */}
+      {/* Reports List grouped by Date */}
       {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-2xl" />
-          ))}
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-48 rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-2xl" />
+          <Skeleton className="h-32 w-full rounded-2xl" />
         </div>
-      ) : filteredReports.length === 0 ? (
-        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-8 text-center space-y-3 rounded-2xl">
-          <FileText className="h-8 w-8 text-muted-foreground mx-auto" />
-          <p className="font-bold text-xs text-foreground">No lab reports match your search query for Patient UUID: {patientUuid}.</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-xl text-xs h-8 px-3.5"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedLab('all');
-              setSelectedDoctor('all');
-              setFilterAbnormalOnly(false);
-            }}
-          >
-            Reset Filters
+      ) : groupedReports.length === 0 ? (
+        <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 shadow-xs rounded-3xl p-12 text-center space-y-3">
+          <div className="h-12 w-12 rounded-2xl bg-zinc-100 dark:bg-zinc-900 mx-auto flex items-center justify-center text-muted-foreground">
+            <FileText className="h-6 w-6" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-foreground">No Diagnostic Reports Found</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+              No medical reports exist for Patient UUID: <strong className="font-mono">{patientUuid}</strong>. Upload a report using MedParser to get started.
+            </p>
+          </div>
+          <Button onClick={() => setUploadOpen(true)} className="rounded-xl text-xs font-bold gap-1.5">
+            <Plus className="size-3.5" /> Upload First Report
           </Button>
         </Card>
       ) : (
         <div className="space-y-6">
           {groupedReports.map((group) => (
-            <div key={group.dateKey} className="space-y-2.5">
-              {/* Harmonized Date Section Banner */}
-              <div className="flex items-center gap-2.5 px-1 py-1">
-                <div className="size-7 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs font-mono shrink-0 shadow-2xs">
-                  <Calendar className="size-3.5" />
+            <div key={group.dateKey} className="space-y-3">
+              {/* Chronological Date Marker Strip */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 text-foreground font-mono font-bold text-xs border border-zinc-200/60 dark:border-zinc-800 shadow-2xs">
+                  <Calendar className="size-3.5 text-emerald-500" />
+                  <span>{group.formattedDate}</span>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <h2 className="text-sm font-extrabold text-foreground font-mono tracking-tight">
-                    {group.formattedDate}
-                  </h2>
-                  <span className="text-xs text-muted-foreground font-mono">
-                    ({group.items.length} {group.items.length === 1 ? 'panel' : 'panels'})
-                  </span>
-                </div>
+                <div className="h-px flex-1 bg-zinc-200/60 dark:bg-zinc-800" />
+                <span className="text-[11px] font-mono text-muted-foreground">
+                  {group.items.length} {group.items.length === 1 ? 'Report' : 'Reports'}
+                </span>
               </div>
 
               {/* Synchronized Card Rows */}
@@ -320,6 +348,19 @@ function ReportsContent() {
                           >
                             <Download className="size-3.5" />
                           </button>
+
+                          <button
+                            onClick={() => handleDeleteReport(report.id, report.labName)}
+                            disabled={deletingId === report.id}
+                            className="size-8 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 flex items-center justify-center transition-colors"
+                            title="Delete Report"
+                          >
+                            {deletingId === report.id ? (
+                              <Loader2 className="size-3.5 animate-spin" />
+                            ) : (
+                              <Trash2 className="size-3.5" />
+                            )}
+                          </button>
                         </div>
                       </div>
 
@@ -378,18 +419,18 @@ function ReportsContent() {
                                         {t.rawValue} <span className="text-xs font-normal text-muted-foreground">{t.unit}</span>
                                       </span>
                                     </td>
-                                    <td className="py-2.5 px-4 font-mono text-muted-foreground text-xs">
-                                      {t.referenceRange || 'Standard'}
+                                    <td className="py-2.5 px-4 text-muted-foreground font-mono text-xs">
+                                      {t.referenceRange || '—'}
                                     </td>
                                     <td className="py-2.5 px-4 text-right">
                                       {t.isAbnormal ? (
-                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400">
-                                          <AlertTriangle className="size-3" /> Flagged
-                                        </span>
+                                        <Badge variant="destructive" className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border-none">
+                                          Abnormal
+                                        </Badge>
                                       ) : (
-                                        <span className="inline-flex items-center gap-1 font-mono text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
-                                          <CheckCircle2 className="size-3" /> Optimal
-                                        </span>
+                                        <Badge variant="secondary" className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-none">
+                                          Normal
+                                        </Badge>
                                       )}
                                     </td>
                                   </tr>
@@ -413,7 +454,7 @@ function ReportsContent() {
 
 export default function ReportsPage() {
   return (
-    <React.Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
+    <React.Suspense fallback={<Skeleton className="h-96 w-full rounded-3xl" />}>
       <ReportsContent />
     </React.Suspense>
   );

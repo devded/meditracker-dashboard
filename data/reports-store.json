@@ -1,0 +1,182 @@
+{
+  "D198349": {
+    "rep_1785629344444_3vt9": {
+      "patient_name": "Mrs. Parul Islam",
+      "patient_id": "D198349",
+      "date": "21/07/2026",
+      "lab_name": "POPULAR DIAGNOSTIC CENTRE LTD.",
+      "doctor_name": "ASSO. PROF. DR. OMAR FAROQUE",
+      "clinical_summary": "Patient exhibits anemia indicated by decreased Red Blood Cells (3.01 million/µl), Haemoglobin (9.80 g/dL), and HCT (28.80%). Platelets are also low (120 K/µL) with elevated MPV (9.50 fl). White blood cell count and differential counts are within normal limits.",
+      "tests": [
+        {
+          "name": "White Blood Cells",
+          "value": "5.00",
+          "unit": "K / µL",
+          "reference_range": "4.00 - 10.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Neutrophils",
+          "value": "3.25",
+          "unit": "K / µL",
+          "reference_range": "2.00 - 7.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Lymphocyte",
+          "value": "1.30",
+          "unit": "K / µL",
+          "reference_range": "1.00 - 3.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Monocyte",
+          "value": "0.25",
+          "unit": "K / µL",
+          "reference_range": "0.20 - 1.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Eosinophil",
+          "value": "0.20",
+          "unit": "K / µL",
+          "reference_range": "0.02 - 0.50",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Neutrophil%",
+          "value": "65",
+          "unit": "%",
+          "reference_range": "40.00 - 80.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Lymphocyte%",
+          "value": "26",
+          "unit": "%",
+          "reference_range": "20.00 - 40.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Monocyte%",
+          "value": "05",
+          "unit": "%",
+          "reference_range": "2.00 - 10.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Eosinophil%",
+          "value": "04",
+          "unit": "%",
+          "reference_range": "1.00 - 6.00",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Basophil%",
+          "value": "00",
+          "unit": "%",
+          "reference_range": "<1-2",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Red Blood Cells",
+          "value": "3.01",
+          "unit": "million/µl",
+          "reference_range": "3.80 - 4.80",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "Haemoglobin",
+          "value": "9.80",
+          "unit": "g/dL",
+          "reference_range": "12.00 - 15.00",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "HCT",
+          "value": "28.80",
+          "unit": "%",
+          "reference_range": "34.80 - 45.00",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCV",
+          "value": "95.7",
+          "unit": "fl",
+          "reference_range": "79 - 96",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCH",
+          "value": "32.6",
+          "unit": "pg",
+          "reference_range": "26 - 33",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "MCHC",
+          "value": "34.0",
+          "unit": "g/dL",
+          "reference_range": "32 - 36",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "RDW-CV(%)",
+          "value": "13.9",
+          "unit": "%",
+          "reference_range": "11 - 15",
+          "is_abnormal": false,
+          "category": "Hematology"
+        },
+        {
+          "name": "Platelets",
+          "value": "120",
+          "unit": "K / µL",
+          "reference_range": "150 - 410",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "MPV",
+          "value": "9.50",
+          "unit": "fl",
+          "reference_range": "6.30 - 9.10",
+          "is_abnormal": true,
+          "category": "Hematology"
+        },
+        {
+          "name": "PCT",
+          "value": "0.11",
+          "unit": "%",
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Hematology"
+        },
+        {
+          "name": "PDW",
+          "value": "8.90",
+          "unit": "fl",
+          "reference_range": null,
+          "is_abnormal": null,
+          "category": "Hematology"
+        }
+      ]
+    }
+  }
+}
