@@ -52,6 +52,12 @@ export async function saveReportToFirestore(rawInput: ApiReport | any, patientUu
   const reportId = `rep_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
   apiReport.patient_id = patientUuid;
 
+  // source_file rides on the extraction envelope, not the parsed payload — carry it
+  // across the unwrap so the report keeps a pointer to its original document.
+  if (rawInput?.source_file && !apiReport.source_file) {
+    apiReport.source_file = rawInput.source_file;
+  }
+
   const mappedReport = mapReport(apiReport, reportId);
   mappedReport.patientId = patientUuid;
 
