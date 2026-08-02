@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
+import { getLocalReportById, deleteLocalReport } from '@/lib/local-store';
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +20,12 @@ export async function GET(
       return NextResponse.json({ success: true, report });
     }
   } catch (error) {
-    console.warn('API Route getDoc error:', error);
+    console.warn('API Route getDoc error, checking local store:', error);
+  }
+
+  const localReport = getLocalReportById(id, uuid);
+  if (localReport) {
+    return NextResponse.json({ success: true, report: localReport });
   }
 
   return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });
@@ -35,8 +41,10 @@ export async function DELETE(
 
   try {
     await adminDb.collection('users').doc(uuid).collection('reports').doc(id).delete();
-    return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || 'Delete failed' }, { status: 500 });
+    console.warn('Firestore delete unavailable, deleting from local store:', error?.message);
   }
+
+  deleteLocalReport(id, uuid);
+  return NextResponse.json({ success: true });
 }

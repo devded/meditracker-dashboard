@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
+import { getLocalReports, saveLocalReport } from '@/lib/local-store';
 
 /**
  * GET /api/reports?uuid=D198349
  * Fetch all reports for Patient UUID from Cloud Firestore via Firebase Admin SDK.
- * Returns empty array if no reports exist for this Patient UUID.
+ * Fallbacks to server-side local storage if Cloud Firestore API is disabled on GCP.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,10 +14,6 @@ export async function GET(request: NextRequest) {
 
   try {
     const snapshot = await adminDb.collection('users').doc(uuid).collection('reports').orderBy('date', 'desc').get();
-
-    if (snapshot.empty) {
-      return NextResponse.json({ success: true, reports: [] });
-    }
 
     const reports = snapshot.docs.map((doc) => {
       const data = doc.data();
@@ -27,14 +24,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, reports });
   } catch (error: any) {
-    console.warn('Server API Firestore fetch warning:', error);
-    return NextResponse.json({ success: true, reports: [] });
+    console.warn('Cloud Firestore API disabled/unavailable, using resilient server local store:', error?.message || error);
+    const localReports = getLocalReports(uuid);
+    return NextResponse.json({ success: true, reports: localReports });
   }
 }
 
 /**
  * POST /api/reports
  * Save new extracted / Gemini-parsed report into Cloud Firestore via Firebase Admin SDK.
+ * Fallbacks to server-side local storage if Cloud Firestore API is disabled on GCP.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -46,13 +45,17 @@ export async function POST(request: NextRequest) {
     const reportId = `rep_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     apiReport.patient_id = uuid;
 
-    await adminDb.collection('users').doc(uuid).collection('reports').doc(reportId).set({
-      ...apiReport,
-      createdAt: new Date(),
-    });
+    try {
+      await adminDb.collection('users').doc(uuid).collection('reports').doc(reportId).set({
+        ...apiReport,
+        createdAt: new Date(),
+      });
+    } catch (fsErr: any) {
+      console.warn('Firestore write unavailable, saving to server local store:', fsErr?.message || fsErr);
+    }
 
-    const mappedReport = mapReport(apiReport, reportId);
-    mappedReport.patientId = uuid;
+    // Always persist to local store as well for maximum reliability
+    const mappedReport = saveLocalReport(apiReport, uuid, reportId);
 
     return NextResponse.json({ success: true, report: mappedReport });
   } catch (error: any) {
