@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
-import { getLocalReportById, deleteLocalReport } from '@/lib/local-store';
 
 export async function GET(
   request: NextRequest,
@@ -19,13 +18,12 @@ export async function GET(
       report.patientId = uuid;
       return NextResponse.json({ success: true, report });
     }
-  } catch (error) {
-    console.warn('API Route getDoc error, checking local store:', error);
-  }
-
-  const localReport = getLocalReportById(id, uuid);
-  if (localReport) {
-    return NextResponse.json({ success: true, report: localReport });
+  } catch (error: any) {
+    console.error('Failed to load report from Cloud Firestore:', error?.message || error);
+    return NextResponse.json(
+      { success: false, error: error?.message || 'Could not load report' },
+      { status: 502 }
+    );
   }
 
   return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });
@@ -42,9 +40,12 @@ export async function DELETE(
   try {
     await adminDb.collection('users').doc(uuid).collection('reports').doc(id).delete();
   } catch (error: any) {
-    console.warn('Firestore delete unavailable, deleting from local store:', error?.message);
+    console.error('Failed to delete report from Cloud Firestore:', error?.message || error);
+    return NextResponse.json(
+      { success: false, error: error?.message || 'Could not delete report' },
+      { status: 502 }
+    );
   }
 
-  deleteLocalReport(id, uuid);
   return NextResponse.json({ success: true });
 }

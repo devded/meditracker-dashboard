@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
-import { getLocalReports, saveLocalReport } from '@/lib/local-store';
 
 /**
  * GET /api/reports?uuid=D198349
  * Fetch all reports for Patient UUID from Cloud Firestore via Firebase Admin SDK.
- * Fallbacks to server-side local storage if Cloud Firestore API is disabled on GCP.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -24,16 +22,17 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, reports });
   } catch (error: any) {
-    console.warn('Cloud Firestore API disabled/unavailable, using resilient server local store:', error?.message || error);
-    const localReports = getLocalReports(uuid);
-    return NextResponse.json({ success: true, reports: localReports });
+    console.error('Failed to load reports from Cloud Firestore:', error?.message || error);
+    return NextResponse.json(
+      { success: false, error: error?.message || 'Could not load reports' },
+      { status: 502 }
+    );
   }
 }
 
 /**
  * POST /api/reports
  * Save new extracted / Gemini-parsed report into Cloud Firestore via Firebase Admin SDK.
- * Fallbacks to server-side local storage if Cloud Firestore API is disabled on GCP.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -49,17 +48,13 @@ export async function POST(request: NextRequest) {
     const sourceFile = apiReport.source_file || rawInput?.source_file || body?.source_file || null;
     apiReport.source_file = sourceFile;
 
-    try {
-      await adminDb.collection('users').doc(uuid).collection('reports').doc(reportId).set({
-        ...apiReport,
-        createdAt: new Date(),
-      });
-    } catch (fsErr: any) {
-      console.warn('Firestore write unavailable, saving to server local store:', fsErr?.message || fsErr);
-    }
+    await adminDb.collection('users').doc(uuid).collection('reports').doc(reportId).set({
+      ...apiReport,
+      createdAt: new Date(),
+    });
 
-    // Always persist to local store as well for maximum reliability
-    const mappedReport = saveLocalReport(apiReport, uuid, reportId);
+    const mappedReport = mapReport(apiReport, reportId);
+    mappedReport.patientId = uuid;
 
     return NextResponse.json({ success: true, report: mappedReport });
   } catch (error: any) {

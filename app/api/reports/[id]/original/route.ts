@@ -5,7 +5,6 @@ import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
-import { getLocalReportById } from '@/lib/local-store';
 import { s3Client, isS3Configured } from '@/lib/s3-client';
 import { Report } from '@/types';
 
@@ -24,10 +23,10 @@ async function loadReport(id: string, uuid: string): Promise<Report | null> {
     }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    console.warn('Firestore unavailable while loading report original, using local store:', message);
+    console.error('Firestore unavailable while loading report original:', message);
   }
 
-  return getLocalReportById(id, uuid);
+  return null;
 }
 
 /**
