@@ -49,7 +49,8 @@ export function mapReport(rawInput: ApiReport | ParsedApiResponse | any, idOverr
     labName: apiReport?.lab_name || 'Diagnostic Laboratory',
     doctorName: apiReport?.doctor_name || 'Attending Physician',
     clinicalSummary: apiReport?.clinical_summary || 'No clinical remarks recorded.',
-    originalFileUrl: `/mock/reports/${id}.pdf`,
+    // Null for JSON-paste reports, which have no source document behind them.
+    originalFile: apiReport?.source_file ?? null,
     tests,
   };
 }

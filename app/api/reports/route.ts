@@ -45,6 +45,10 @@ export async function POST(request: NextRequest) {
     const reportId = `rep_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     apiReport.patient_id = uuid;
 
+    // Preserve the provenance pointer written by /api/extract, whichever envelope it arrived in.
+    const sourceFile = apiReport.source_file || rawInput?.source_file || body?.source_file || null;
+    apiReport.source_file = sourceFile;
+
     try {
       await adminDb.collection('users').doc(uuid).collection('reports').doc(reportId).set({
         ...apiReport,
