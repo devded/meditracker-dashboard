@@ -87,6 +87,7 @@ const CONVERSIONS: Record<string, Conversion> = {
 
   // ── Case normalisation ─────────────────────────────────────────────────────
   'creatinine|mg/dl':                 { factor: 1,        targetUnit: 'mg/dL' },
+  's. creatinine|mg/dl':              { factor: 1,        targetUnit: 'mg/dL' },
   'mcv|fl':                           { factor: 1,        targetUnit: 'fL' },
   'mpv|fl':                           { factor: 1,        targetUnit: 'fL' },
   'rdw-sd|fl':                        { factor: 1,        targetUnit: 'fL' },

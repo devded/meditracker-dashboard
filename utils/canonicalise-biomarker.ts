@@ -49,17 +49,17 @@ const CANONICAL_GROUPS: Record<string, string[]> = {
   'Basophils':          ['basophils', 'basophil', 'basophil%', 'basophils%', 'baso', 'baso%'],
 
   // ── Renal ──────────────────────────────────────────────────────────────────
-  'Creatinine':         ['creatinine', 's. creatinine', 's.creatinine', 'serum creatinine', 'sr creatinine', 'blood creatinine'],
-  'Urea':               ['urea', 'blood urea', 'bun', 'blood urea nitrogen', 'serum urea'],
-  'Uric Acid':          ['uric acid', 'serum uric acid', 's. uric acid'],
+  'S. Creatinine':      ['creatinine', 's. creatinine', 's.creatinine', 'serum creatinine', 'sr creatinine', 'blood creatinine'],
+  'S. Urea':            ['urea', 'blood urea', 'bun', 'blood urea nitrogen', 'serum urea', 's. urea'],
+  'S. Uric Acid':       ['uric acid', 'serum uric acid', 's. uric acid', 's.uric acid'],
 
   // ── Electrolytes ───────────────────────────────────────────────────────────
-  'Sodium':             ['sodium', 'sodium (na)', 'na', 'na+', 's. sodium', 'serum sodium'],
-  'Potassium':          ['potassium', 'potassium (k)', 'k', 'k+', 's. potassium', 'serum potassium'],
-  'Chloride':           ['chloride', 'chloride (cl)', 'cl', 'cl-', 's. chloride', 'serum chloride'],
-  'Calcium':            ['calcium', 'ca', 'ca++', 's. calcium', 'serum calcium', 'total calcium'],
-  'Magnesium':          ['magnesium', 'mg', 'mg++', 's. magnesium', 'serum magnesium'],
-  'Phosphate':          ['phosphate', 'phosphorus', 's. phosphate', 'serum phosphate', 'inorganic phosphorus'],
+  'S. Sodium':          ['sodium', 'sodium (na)', 'na', 'na+', 's. sodium', 'serum sodium', 's.sodium'],
+  'S. Potassium':       ['potassium', 'potassium (k)', 'k', 'k+', 's. potassium', 'serum potassium', 's.potassium'],
+  'S. Chloride':        ['chloride', 'chloride (cl)', 'cl', 'cl-', 's. chloride', 'serum chloride', 's.chloride'],
+  'S. Calcium':         ['calcium', 'ca', 'ca++', 's. calcium', 'serum calcium', 'total calcium', 's.calcium'],
+  'S. Magnesium':       ['magnesium', 'mg', 'mg++', 's. magnesium', 'serum magnesium', 's.magnesium'],
+  'S. Phosphate':       ['phosphate', 'phosphorus', 's. phosphate', 'serum phosphate', 'inorganic phosphorus', 's.phosphate'],
   'Bicarbonate':        ['bicarbonate', 'bicarbonate (hco3)', 'hco3', 'hco3-', 'serum bicarbonate'],
   'CO2':                ['co2', 'carbondioxide', 'carbondioxide (co2)', 'carbon dioxide', 'total co2'],
 
@@ -69,8 +69,8 @@ const CANONICAL_GROUPS: Record<string, string[]> = {
   'Glucose':            ['glucose', 'blood glucose', 'blood sugar', 'sugar', 'random blood sugar', 'rbs', 'random glucose'],
 
   // ── Liver ──────────────────────────────────────────────────────────────────
-  'Albumin':            ['albumin', 'serum albumin', 's. albumin'],
-  'Bilirubin':          ['bilirubin', 'total bilirubin', 'serum bilirubin', 's. bilirubin'],
+  'S. Albumin':         ['albumin', 'serum albumin', 's. albumin', 's.albumin'],
+  'S. Bilirubin':       ['bilirubin', 'total bilirubin', 'serum bilirubin', 's. bilirubin', 's.bilirubin'],
 
   // ── ESR ────────────────────────────────────────────────────────────────────
   'ESR':                ['esr', 'esr (automated)', 'erythrocyte sedimentation rate', 'esr automated', 'esr (westergren)'],

@@ -30,14 +30,14 @@ const SERIES_COLORS = [
 // Preferred ordering only — the selectable series come from the patient's own reports.
 const PREFERRED_BIOMARKERS = [
   'Cholesterol',
-  'Creatinine',
+  'S. Creatinine',
   'ESR',
   'Glucose',
   'Haemoglobin',
   'Total Platelet Count',
   'Total WBC',
   'Triglycerides',
-  'Urea',
+  'S. Urea',
   'Vitamin D',
 ];
 

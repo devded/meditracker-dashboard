@@ -25,7 +25,7 @@ import { BiomarkerComparisonRangeChart } from '@/features/dashboard/biomarker-co
 const PREFERRED_BIOMARKERS = [
   'Cholesterol',
   'Glucose',
-  'Creatinine',
+  'S. Creatinine',
   'Haemoglobin',
   'ALT/SGPT',
   'Triglycerides',

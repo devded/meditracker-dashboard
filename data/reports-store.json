@@ -380,7 +380,7 @@
       "clinical_summary": "Serum Creatinine is elevated at 2.24 mg/dL for an adult female (reference range: 0.50 - 0.90 mg/dL), indicating impaired kidney function.",
       "tests": [
         {
-          "name": "Creatinine",
+          "name": "S. Creatinine",
           "value": "2.24",
           "unit": "mg/dL",
           "reference_range": "0.50 - 0.90",
@@ -411,7 +411,7 @@
       "clinical_summary": "Serum electrolyte evaluation reveals high potassium levels (hyperkalemia) alongside low carbondioxide and bicarbonate levels, indicating potential acid-base imbalance/metabolic acidosis.",
       "tests": [
         {
-          "name": "Sodium",
+          "name": "S. Sodium",
           "value": "136.00",
           "unit": "mmol/L",
           "reference_range": "136.0 - 145.0",
@@ -419,7 +419,7 @@
           "category": "Biochemistry"
         },
         {
-          "name": "Potassium",
+          "name": "S. Potassium",
           "value": "6.85",
           "unit": "mmol/L",
           "reference_range": "3.50 - 5.10",
@@ -427,7 +427,7 @@
           "category": "Biochemistry"
         },
         {
-          "name": "Chloride",
+          "name": "S. Chloride",
           "value": "106.20",
           "unit": "mmol/L",
           "reference_range": "98.00 - 107.00",
@@ -474,7 +474,7 @@
       "clinical_summary": "Magnesium level is within normal limits at 1.80 mg/dL.",
       "tests": [
         {
-          "name": "Magnesium",
+          "name": "S. Magnesium",
           "value": "1.80",
           "unit": "mg/dL",
           "reference_range": "1.60 - 2.30",
@@ -553,7 +553,7 @@
           "category": "Urine Routine Examination"
         },
         {
-          "name": "Albumin",
+          "name": "S. Albumin",
           "value": "Trace",
           "unit": null,
           "reference_range": "Nil",
@@ -569,7 +569,7 @@
           "category": "Urine Routine Examination"
         },
         {
-          "name": "Phosphate",
+          "name": "S. Phosphate",
           "value": "Nil",
           "unit": null,
           "reference_range": null,
@@ -577,7 +577,7 @@
           "category": "Urine Routine Examination"
         },
         {
-          "name": "Bilirubin",
+          "name": "S. Bilirubin",
           "value": "Negative",
           "unit": null,
           "reference_range": null,
@@ -673,7 +673,7 @@
           "category": "Urine Routine Examination"
         },
         {
-          "name": "Uric Acid",
+          "name": "S. Uric Acid",
           "value": "Nil",
           "unit": null,
           "reference_range": null,
@@ -911,7 +911,7 @@
       "clinical_summary": "Serum Creatinine is elevated at 1.84 mg/dL, exceeding the female reference range of 0.50 - 0.90 mg/dL.",
       "tests": [
         {
-          "name": "Creatinine",
+          "name": "S. Creatinine",
           "value": "1.84",
           "unit": "mg/dL",
           "reference_range": "0.50 - 0.90",
@@ -942,7 +942,7 @@
       "clinical_summary": "Serum electrolytes panel indicates decreased levels of Carbondioxide (20.00 mmol/L) and Bicarbonate (18.00 mmol/L). Sodium, Potassium, and Chloride levels are within normal reference ranges.",
       "tests": [
         {
-          "name": "Sodium",
+          "name": "S. Sodium",
           "value": "137.00",
           "unit": "mmol/L",
           "reference_range": "136.0 - 145.0",
@@ -950,7 +950,7 @@
           "category": "Electrolytes"
         },
         {
-          "name": "Potassium",
+          "name": "S. Potassium",
           "value": "4.67",
           "unit": "mmol/L",
           "reference_range": "3.50 - 5.10",
@@ -958,7 +958,7 @@
           "category": "Electrolytes"
         },
         {
-          "name": "Chloride",
+          "name": "S. Chloride",
           "value": "104.30",
           "unit": "mmol/L",
           "reference_range": "98.00 - 107.00",
@@ -1005,7 +1005,7 @@
       "clinical_summary": "Serum calcium level is normal at 9.15 mg/dL.",
       "tests": [
         {
-          "name": "Calcium",
+          "name": "S. Calcium",
           "value": "9.15",
           "unit": "mg/dL",
           "reference_range": "8.80-10.60",
@@ -1235,7 +1235,7 @@
       "clinical_summary": "Serum Creatinine level is 0.50 mg/dL, which is slightly below the reference range for females (0.55 - 1.20 mg/dL).",
       "tests": [
         {
-          "name": "Creatinine",
+          "name": "S. Creatinine",
           "value": "0.50",
           "unit": "mg/dL",
           "reference_range": "Female: 0.55 - 1.20",
@@ -1319,7 +1319,7 @@
       "clinical_summary": "Biochemistry panel shows elevated serum creatinine level (1.69 mg/dl) indicating potential renal dysfunction, alongside a slightly reduced serum sodium level (134.8 mmol/L). Serum potassium and chloride levels remain within normal limits.",
       "tests": [
         {
-          "name": "Sodium",
+          "name": "S. Sodium",
           "value": "134.8",
           "unit": "mmol/L",
           "reference_range": "136-145 mmol/L",
@@ -1327,7 +1327,7 @@
           "category": "Electrolytes"
         },
         {
-          "name": "Potassium",
+          "name": "S. Potassium",
           "value": "4.50",
           "unit": "mmol/L",
           "reference_range": "3.5-5.2 mmol/L",
@@ -1335,7 +1335,7 @@
           "category": "Electrolytes"
         },
         {
-          "name": "Chloride",
+          "name": "S. Chloride",
           "value": "106.9",
           "unit": "mmol/L",
           "reference_range": "96-108 mmol/L",
@@ -1343,7 +1343,7 @@
           "category": "Electrolytes"
         },
         {
-          "name": "Creatinine",
+          "name": "S. Creatinine",
           "value": "1.69",
           "unit": "mg/dl",
           "reference_range": "M:0.6-1.4 F:0.55-1.2mg/dl",
@@ -1372,7 +1372,7 @@
       "clinical_summary": "Serum creatinine is elevated at 2.14 mg/dl, above the normal range for females (0.55-1.2 mg/dl), indicating impaired kidney function.",
       "tests": [
         {
-          "name": "Creatinine",
+          "name": "S. Creatinine",
           "value": "2.14",
           "unit": "mg/dl",
           "reference_range": "M:0.6-1.4 F:0.55-1.2mg/dl",
