@@ -20,11 +20,11 @@ export function BiomarkerTimelineChart({
   selectedBiomarker: externalBiomarker,
   onSelectBiomarker: externalOnSelect,
 }: BiomarkerTimelineChartProps) {
-  // Extract all unique biomarker names across reports
+  // Extract all unique biomarker names across reports, sorted alphabetically
   const availableBiomarkers = React.useMemo(() => {
     const set = new Set<string>();
     reports.forEach((r) => r.tests.forEach((t) => set.add(t.name)));
-    return Array.from(set);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [reports]);
 
   const [internalBiomarker, setInternalBiomarker] = React.useState<string>('');
