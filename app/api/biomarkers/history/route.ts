@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
 import { BiomarkerTrendPoint } from '@/types';
-import { getLocalReports } from '@/lib/local-store';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -15,12 +14,11 @@ export async function GET(request: NextRequest) {
     const snapshot = await adminDb.collection('users').doc(uuid).collection('reports').get();
     reports = snapshot.docs.map((doc) => mapReport(doc.data(), doc.id));
   } catch (error: any) {
-    console.warn('Firestore history query unavailable, loading from local store:', error?.message);
-    reports = getLocalReports(uuid);
-  }
-
-  if (reports.length === 0) {
-    reports = getLocalReports(uuid);
+    console.error('Firestore history query failed:', error?.message || error);
+    return NextResponse.json(
+      { success: false, error: error?.message || 'Could not load biomarker history' },
+      { status: 502 }
+    );
   }
 
   const sortedReports = [...reports].sort(
