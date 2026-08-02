@@ -26,11 +26,16 @@ export function BiomarkerTimelineChart({
     return Array.from(set);
   }, [reports]);
 
-  const [internalBiomarker, setInternalBiomarker] = React.useState<string>(
-    availableBiomarkers.includes('Cholesterol') ? 'Cholesterol' : availableBiomarkers[0] || 'Haemoglobin'
-  );
+  const [internalBiomarker, setInternalBiomarker] = React.useState<string>('');
 
-  const selectedBiomarker = externalBiomarker || internalBiomarker;
+  // Reports arrive after the first paint, so resolve the fallback during render
+  // rather than pinning a name that may not exist in this patient's data.
+  const resolvedInternal =
+    internalBiomarker && availableBiomarkers.includes(internalBiomarker)
+      ? internalBiomarker
+      : availableBiomarkers[0] ?? '';
+
+  const selectedBiomarker = externalBiomarker || resolvedInternal;
 
   const handleSelect = (val: string) => {
     setInternalBiomarker(val);

@@ -13,40 +13,81 @@ interface BiomarkerComparisonRangeChartProps {
   reports: Report[];
 }
 
-export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRangeChartProps) {
-  const ALL_BIOMARKERS = [
-    { name: 'Cholesterol', color: '#ea580c' },
-    { name: 'Creatinine', color: '#0d9488' },
-    { name: 'ESR', color: '#2563eb' },
-    { name: 'Glucose', color: '#64748b' },
-    { name: 'Haemoglobin', color: '#7c3aed' },
-    { name: 'Total Platelet Count', color: '#f43f5e' },
-    { name: 'Total WBC', color: '#0284c7' },
-    { name: 'Triglycerides', color: '#d97706' },
-    { name: 'Urea', color: '#059669' },
-    { name: 'Vitamin D', color: '#8b5cf6' },
-  ];
+const SERIES_COLORS = [
+  '#ea580c',
+  '#0d9488',
+  '#2563eb',
+  '#64748b',
+  '#7c3aed',
+  '#f43f5e',
+  '#0284c7',
+  '#d97706',
+  '#059669',
+  '#8b5cf6',
+];
 
-  // Currently selected active series (max 5)
-  const [selectedSeries, setSelectedSeries] = React.useState<string[]>([
-    'Cholesterol',
-    'Creatinine',
-    'ESR',
-  ]);
+// Preferred ordering only — the selectable series come from the patient's own reports.
+const PREFERRED_BIOMARKERS = [
+  'Cholesterol',
+  'Creatinine',
+  'ESR',
+  'Glucose',
+  'Haemoglobin',
+  'Total Platelet Count',
+  'Total WBC',
+  'Triglycerides',
+  'Urea',
+  'Vitamin D',
+];
+
+const MAX_SERIES = 5;
+const SERIES_LIMIT = 10;
+
+export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRangeChartProps) {
+  // Only biomarkers present in the patient's reports can be compared. Ordered by
+  // preferred panel first, then by how often they recur across reports.
+  const ALL_BIOMARKERS = React.useMemo(() => {
+    const counts: Record<string, number> = {};
+    reports.forEach((r) => {
+      r.tests.forEach((t) => {
+        counts[t.name] = (counts[t.name] || 0) + 1;
+      });
+    });
+
+    const available = Object.keys(counts);
+    const preferred = PREFERRED_BIOMARKERS.filter((name) => available.includes(name));
+    const rest = available
+      .filter((name) => !preferred.includes(name))
+      .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+
+    return [...preferred, ...rest]
+      .slice(0, SERIES_LIMIT)
+      .map((name, idx) => ({ name, color: SERIES_COLORS[idx % SERIES_COLORS.length] }));
+  }, [reports]);
+
+  // Currently selected active series (max 5). Empty means "use the default picks",
+  // which are resolved during render since reports arrive after the first paint.
+  const [selectedSeries, setSelectedSeries] = React.useState<string[]>([]);
+
+  const activeSeries = React.useMemo(() => {
+    const names = ALL_BIOMARKERS.map((b) => b.name);
+    const stillValid = selectedSeries.filter((s) => names.includes(s));
+    return stillValid.length > 0 ? stillValid : names.slice(0, 3);
+  }, [ALL_BIOMARKERS, selectedSeries]);
 
   const toggleSeries = (name: string) => {
-    if (selectedSeries.includes(name)) {
-      if (selectedSeries.length === 1) {
+    if (activeSeries.includes(name)) {
+      if (activeSeries.length === 1) {
         toast.info('At least one series must remain selected.');
         return;
       }
-      setSelectedSeries((prev) => prev.filter((s) => s !== name));
+      setSelectedSeries(activeSeries.filter((s) => s !== name));
     } else {
-      if (selectedSeries.length >= 5) {
-        toast.warning('Maximum 5 series allowed simultaneously.');
+      if (activeSeries.length >= MAX_SERIES) {
+        toast.warning(`Maximum ${MAX_SERIES} series allowed simultaneously.`);
         return;
       }
-      setSelectedSeries((prev) => [...prev, name]);
+      setSelectedSeries([...activeSeries, name]);
     }
   };
 
@@ -79,7 +120,7 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
 
       return point;
     });
-  }, [reports]);
+  }, [reports, ALL_BIOMARKERS]);
 
   return (
     <Card className="bg-white dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 p-6 space-y-4 shadow-xs rounded-3xl">
@@ -95,8 +136,13 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
 
       {/* Interactive Multi-Select Legend Pills */}
       <div className="flex flex-wrap items-center gap-2 pt-1">
+        {ALL_BIOMARKERS.length === 0 && (
+          <span className="text-[11px] font-mono text-muted-foreground">
+            No biomarkers recorded yet — upload a report to populate this comparison.
+          </span>
+        )}
         {ALL_BIOMARKERS.map((bm) => {
-          const active = selectedSeries.includes(bm.name);
+          const active = activeSeries.includes(bm.name);
           return (
             <button
               key={bm.name}
@@ -120,7 +166,7 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
       {/* Multi-Series Line Chart with Green Reference Band (0-100%) */}
       <div className="h-[280px] w-full pt-2">
         <ChartContainer
-          config={selectedSeries.reduce((acc, name) => {
+          config={activeSeries.reduce((acc, name) => {
             const found = ALL_BIOMARKERS.find((b) => b.name === name);
             acc[name] = { label: name, color: found ? found.color : '#0f172a' };
             return acc;
@@ -169,7 +215,7 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
                 />
               }
             />
-            {selectedSeries.map((name) => {
+            {activeSeries.map((name) => {
               const found = ALL_BIOMARKERS.find((b) => b.name === name);
               const color = found ? found.color : '#0f172a';
               return (
@@ -191,7 +237,7 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
       </div>
 
       <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground">
-        <span>Showing {selectedSeries.length} of max 5 active series.</span>
+        <span>Showing {activeSeries.length} of max {MAX_SERIES} active series ({ALL_BIOMARKERS.length} available).</span>
         <span className="flex items-center gap-1.5 text-emerald-500 font-semibold">
           <ShieldCheck className="size-3.5" /> Green Band (0%–100%) = Normal Clinical Reference
         </span>
