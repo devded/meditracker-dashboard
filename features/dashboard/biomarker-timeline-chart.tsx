@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Report } from '@/types';
+import { normaliseForChart, getDominantUnit } from '@/utils/normalise-unit';
 import { TrendingUp } from 'lucide-react';
 
 interface BiomarkerTimelineChartProps {
@@ -44,27 +45,49 @@ export function BiomarkerTimelineChart({
     }
   };
 
-  // Build trend timeline data for selected biomarker
-  const chartData = React.useMemo(() => {
-    return [...reports]
-      .sort((a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime())
+  // Build trend timeline data for selected biomarker, normalising units so all
+  // points on the same line share a single consistent unit.
+  const { chartData, displayUnit } = React.useMemo(() => {
+    const sorted = [...reports].sort(
+      (a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime()
+    );
+
+    // Collect every test entry for the selected biomarker to detect the dominant unit.
+    const matchingTests = sorted.flatMap((r) =>
+      r.tests.filter((t) => t.name.toLowerCase().trim() === selectedBiomarker.toLowerCase().trim())
+    );
+    const dominant = getDominantUnit(selectedBiomarker, matchingTests);
+
+    const points = sorted
       .map((r) => {
-        const test = r.tests.find((t) => t.name.toLowerCase().trim() === selectedBiomarker.toLowerCase().trim());
+        const test = r.tests.find(
+          (t) => t.name.toLowerCase().trim() === selectedBiomarker.toLowerCase().trim()
+        );
+        if (!test) return null;
+
+        const norm = normaliseForChart(selectedBiomarker, test.value, test.unit, dominant);
+        if (!norm) return null; // incompatible unit family — skip
+
         return {
           date: r.formattedDate,
-          val: test ? test.value : null,
-          rawValue: test ? test.rawValue : 'N/A',
-          unit: test ? test.unit : '',
-          isAbnormal: test ? test.isAbnormal : false,
-          refRange: test ? test.referenceRange : '',
+          val: norm.value,
+          rawValue: test.rawValue,
+          unit: norm.unit,
+          isAbnormal: test.isAbnormal,
+          refRange: test.referenceRange,
         };
       })
-      .filter((d) => d.val !== null);
+      .filter(Boolean) as {
+        date: string; val: number; rawValue: string;
+        unit: string; isAbnormal: boolean; refRange: string | null;
+      }[];
+
+    return { chartData: points, displayUnit: points[0]?.unit ?? '' };
   }, [reports, selectedBiomarker]);
 
   const chartConfig = {
     val: {
-      label: selectedBiomarker,
+      label: `${selectedBiomarker}${displayUnit ? ` (${displayUnit})` : ''}`,
       color: '#ea580c',
     },
   } satisfies ChartConfig;
@@ -113,16 +136,17 @@ export function BiomarkerTimelineChart({
               tickMargin={10}
               domain={['auto', 'auto']}
               className="text-[10px] text-muted-foreground font-mono"
+              label={displayUnit ? { value: displayUnit, angle: -90, position: 'insideLeft', offset: 15, style: { fontSize: 10, fill: '#a1a1aa' } } : undefined}
             />
             <ChartTooltip
               content={
                 <ChartTooltipContent
                   indicator="dot"
-                  formatter={(val, name, item) => (
+                  formatter={(_val, _name, item) => (
                     <div className="flex items-center justify-between gap-4 text-xs font-mono">
                       <span className="text-muted-foreground">{selectedBiomarker}:</span>
                       <span className="font-bold text-foreground">
-                        {item.payload.rawValue} {item.payload.unit}
+                        {item.payload.val} {item.payload.unit}
                       </span>
                     </div>
                   )}

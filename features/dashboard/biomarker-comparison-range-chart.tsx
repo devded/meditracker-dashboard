@@ -4,7 +4,8 @@ import * as React from 'react';
 import { Card } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ReferenceArea } from 'recharts';
-import { Report } from '@/types';
+import { Report, Test } from '@/types';
+import { normaliseForChart } from '@/utils/normalise-unit';
 import { parseReferenceRange } from '@/utils/parse-reference-range';
 import { toast } from 'sonner';
 import { Layers, ShieldCheck } from 'lucide-react';
@@ -105,15 +106,18 @@ export function BiomarkerComparisonRangeChart({ reports }: BiomarkerComparisonRa
           (t) => t.name.toLowerCase().trim() === bm.name.toLowerCase().trim()
         );
         if (test) {
+          const norm = normaliseForChart(bm.name, test.value, test.unit);
+          const displayVal = norm ? norm.value : test.value;
+          const displayUnit = norm ? norm.unit : test.unit;
           const bounds = parseReferenceRange(test.referenceRange);
           if (bounds && bounds.max > bounds.min) {
             // 0% = range floor (min), 100% = range ceiling (max)
             const pct = Math.round(((test.value - bounds.min) / (bounds.max - bounds.min)) * 100);
             point[bm.name] = pct;
-            point[`${bm.name}_raw`] = `${test.rawValue} ${test.unit}`;
+            point[`${bm.name}_raw`] = `${displayVal} ${displayUnit}`;
           } else {
             point[bm.name] = 50; // Fallback center
-            point[`${bm.name}_raw`] = `${test.rawValue} ${test.unit}`;
+            point[`${bm.name}_raw`] = `${displayVal} ${displayUnit}`;
           }
         }
       });
