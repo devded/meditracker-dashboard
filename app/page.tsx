@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
   // Quick-select chips built from the biomarkers this patient actually has,
   // ordered by preferred clinical panel first, then by how often they recur across reports.
-  const quickBiomarkers = React.useMemo(() => {
+  const { quickBiomarkers, allBiomarkerNames } = React.useMemo(() => {
     const counts: Record<string, number> = {};
     reports.forEach((r) => {
       r.tests.forEach((t) => {
@@ -65,13 +65,18 @@ export default function DashboardPage() {
       .filter((name) => !preferred.includes(name))
       .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
 
-    return [...preferred, ...rest].slice(0, QUICK_BIOMARKER_LIMIT);
+    const ordered = [...preferred, ...rest];
+    return {
+      quickBiomarkers: ordered.slice(0, QUICK_BIOMARKER_LIMIT),
+      allBiomarkerNames: ordered,
+    };
   }, [reports]);
 
   // Resolve during render so the selection always points at a biomarker the patient
-  // actually has — reports arrive after the first paint, and they can be deleted.
+  // actually has — validated against ALL biomarkers, not just the quick-chip subset,
+  // so dropdown selections outside the top-8 chips are preserved.
   const selectedBiomarker =
-    activeBiomarker && quickBiomarkers.includes(activeBiomarker)
+    activeBiomarker && allBiomarkerNames.includes(activeBiomarker)
       ? activeBiomarker
       : quickBiomarkers[0] ?? '';
 
