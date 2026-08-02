@@ -108,9 +108,8 @@ export async function getAvailableBiomarkers(patientUuid?: string): Promise<stri
     });
   });
 
-  // Return biomarkers that appear in 2 or more reports
   return Object.keys(testCounts)
-    .filter((name) => testCounts[name] >= 2 && name.toLowerCase() !== 'others')
+    .filter((name) => testCounts[name] >= 1 && name.toLowerCase() !== 'others')
     .sort();
 }
 
@@ -149,7 +148,7 @@ export async function getAbnormalTrendByReport(patientUuid?: string): Promise<{ 
   const reports = await getReports(patientUuid);
   // Oldest first for trend
   const sorted = [...reports].sort(
-    (a, b) => new Date(a.reportDate).getTime() - new Date(a.reportDate).getTime()
+    (a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime()
   );
 
   return sorted.map((r) => {
@@ -166,69 +165,72 @@ export async function getAbnormalTrendByReport(patientUuid?: string): Promise<{ 
 }
 
 /**
- * Generate plain-language descriptive insights (non-diagnostic).
+ * Dynamically generate plain-language descriptive insights derived from the patient's actual Firestore reports.
  */
-export async function getInsights(): Promise<InsightCardData[]> {
-  return [
-    {
-      id: 'ins-1',
-      title: 'Platelet Count Recovery Trend',
-      biomarker: 'Total Platelet Count',
-      status: 'improving',
-      trend: 'up',
-      changeText: 'Recovered from 70,000 to 220,000 /Cmm',
-      description: 'Your platelet counts show a healthy upward recovery trajectory from previous post-viral thrombocytopenia, now comfortably within standard reference limits.',
-      latestValue: '220,000 /Cmm',
-      referenceRange: '1,50,000-4,50,000',
-      category: 'Hematology',
-    },
-    {
-      id: 'ins-2',
-      title: 'Vitamin D Sufficiency Achieved',
-      biomarker: 'Vitamin D',
-      status: 'improving',
-      trend: 'up',
-      changeText: 'Increased from 18 ng/ml to 45 ng/ml',
-      description: 'Vitamin D 25-OH serum levels have steadily elevated over the past 9 months and are currently in the optimal sufficiency range.',
-      latestValue: '45 ng/ml',
-      referenceRange: '30-100 ng/ml',
-      category: 'Hormone',
-    },
-    {
-      id: 'ins-3',
-      title: 'Inflammatory Markers (ESR) Normalized',
-      biomarker: 'ESR',
-      status: 'stable',
-      trend: 'down',
-      changeText: 'Decreased from 45 mm to 15 mm',
-      description: 'Erythrocyte Sedimentation Rate has fallen back to baseline normal physiological levels following resolution of the acute inflammatory phase.',
-      latestValue: '15 mm',
-      referenceRange: '0-15 mm',
-      category: 'Hematology',
-    },
-    {
-      id: 'ins-4',
-      title: 'Glycemic Control Stabilization',
-      biomarker: 'Glucose',
-      status: 'stable',
-      trend: 'down',
-      changeText: 'Fasting Glucose stabilized at 95 mg/dl',
-      description: 'Fasting blood sugar levels have returned below the 100 mg/dl threshold following dietary adjustment, down from a peak of 118 mg/dl.',
-      latestValue: '95 mg/dl',
-      referenceRange: '70-99 mg/dl',
-      category: 'Biochemistry',
-    },
-    {
-      id: 'ins-5',
-      title: 'Lipid Profile Monitoring',
-      biomarker: 'Cholesterol',
-      status: 'attention',
-      trend: 'down',
-      changeText: 'Total Cholesterol decreased from 235 to 190 mg/dl',
-      description: 'Cholesterol levels have reduced back below 200 mg/dl, but ongoing dietary awareness is recommended to maintain healthy lipid balances.',
-      latestValue: '190 mg/dl',
-      referenceRange: '< 200 mg/dl',
-      category: 'Biochemistry',
-    },
-  ];
+export async function getInsights(patientUuid?: string): Promise<InsightCardData[]> {
+  const reports = await getReports(patientUuid);
+  if (reports.length === 0) return [];
+
+  const insights: InsightCardData[] = [];
+  const testMap: Record<string, { latest: any; previous: any | null }> = {};
+
+  // Sort reports newest first
+  const sorted = [...reports].sort(
+    (a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime()
+  );
+
+  sorted.forEach((report) => {
+    report.tests.forEach((test) => {
+      if (!testMap[test.name]) {
+        testMap[test.name] = { latest: test, previous: null };
+      } else if (!testMap[test.name].previous) {
+        testMap[test.name].previous = test;
+      }
+    });
+  });
+
+  Object.entries(testMap).forEach(([testName, { latest, previous }], idx) => {
+    if (latest.isAbnormal) {
+      insights.push({
+        id: `ins-${idx}`,
+        title: `Out-of-Range Observation: ${testName}`,
+        biomarker: testName,
+        status: 'attention',
+        trend: previous && previous.value < latest.value ? 'up' : 'down',
+        changeText: `Observed value: ${latest.rawValue} ${latest.unit}`,
+        description: `${testName} is currently outside the standard reference range (${latest.referenceRange || 'Standard'}). Clinical follow-up recommended.`,
+        latestValue: `${latest.rawValue} ${latest.unit}`,
+        referenceRange: latest.referenceRange,
+        category: latest.category,
+      });
+    } else if (previous && previous.isAbnormal && !latest.isAbnormal) {
+      insights.push({
+        id: `ins-${idx}`,
+        title: `Recovery Trend: ${testName}`,
+        biomarker: testName,
+        status: 'improving',
+        trend: 'up',
+        changeText: `Normalized from ${previous.rawValue} to ${latest.rawValue} ${latest.unit}`,
+        description: `${testName} has successfully returned to standard reference bounds (${latest.referenceRange || 'Optimal'}).`,
+        latestValue: `${latest.rawValue} ${latest.unit}`,
+        referenceRange: latest.referenceRange,
+        category: latest.category,
+      });
+    } else if (!latest.isAbnormal && insights.length < 5) {
+      insights.push({
+        id: `ins-${idx}`,
+        title: `Optimal Level: ${testName}`,
+        biomarker: testName,
+        status: 'stable',
+        trend: 'stable',
+        changeText: `Maintained at ${latest.rawValue} ${latest.unit}`,
+        description: `${testName} is within normal reference limits (${latest.referenceRange || 'Optimal'}).`,
+        latestValue: `${latest.rawValue} ${latest.unit}`,
+        referenceRange: latest.referenceRange,
+        category: latest.category,
+      });
+    }
+  });
+
+  return insights;
 }

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { mapReport } from '@/utils/map-report';
-import { RAW_MOCK_REPORTS } from '@/mock/reports';
 import { BiomarkerTrendPoint } from '@/types';
 
 export async function GET(request: NextRequest) {
@@ -11,13 +10,11 @@ export async function GET(request: NextRequest) {
 
   try {
     const snapshot = await adminDb.collection('users').doc(uuid).collection('reports').get();
-    let reports: any[] = [];
-
     if (snapshot.empty) {
-      reports = RAW_MOCK_REPORTS.map((raw) => mapReport(raw, raw.id));
-    } else {
-      reports = snapshot.docs.map((doc) => mapReport(doc.data(), doc.id));
+      return NextResponse.json({ success: true, history: [] });
     }
+
+    const reports = snapshot.docs.map((doc) => mapReport(doc.data(), doc.id));
 
     const sortedReports = [...reports].sort(
       (a, b) => new Date(a.reportDate).getTime() - new Date(b.reportDate).getTime()

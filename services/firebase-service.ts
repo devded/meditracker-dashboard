@@ -1,5 +1,4 @@
 import { Report, ApiReport } from '@/types';
-import { RAW_MOCK_REPORTS } from '@/mock/reports';
 import { mapReport } from '@/utils/map-report';
 
 /**
@@ -18,14 +17,10 @@ export async function getReportsFromFirestore(patientUuid: string): Promise<Repo
       }
     }
   } catch (error) {
-    console.warn('Server API Route fetch warning, using local dataset:', error);
+    console.warn('Server API Route fetch warning:', error);
   }
 
-  return RAW_MOCK_REPORTS.map((raw) => {
-    const r = mapReport(raw, raw.id);
-    r.patientId = patientUuid;
-    return r;
-  }).sort((a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime());
+  return [];
 }
 
 /**
@@ -44,13 +39,6 @@ export async function getReportFromFirestoreById(reportId: string, patientUuid: 
     }
   } catch (error) {
     console.warn('Server API Route getDoc error:', error);
-  }
-
-  const localMock = RAW_MOCK_REPORTS.find((r) => r.id === reportId);
-  if (localMock) {
-    const r = mapReport(localMock, localMock.id);
-    r.patientId = patientUuid;
-    return r;
   }
 
   return null;

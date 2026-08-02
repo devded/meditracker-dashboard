@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import { RAW_MOCK_REPORTS } from '@/mock/reports';
 import { mapReport } from '@/utils/map-report';
 
 export async function GET(
@@ -21,13 +20,6 @@ export async function GET(
     }
   } catch (error) {
     console.warn('API Route getDoc error:', error);
-  }
-
-  const localMock = RAW_MOCK_REPORTS.find((r) => r.id === id);
-  if (localMock) {
-    const r = mapReport(localMock, localMock.id);
-    r.patientId = uuid;
-    return NextResponse.json({ success: true, report: r });
   }
 
   return NextResponse.json({ success: false, error: 'Report not found' }, { status: 404 });

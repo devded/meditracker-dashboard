@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import { RAW_MOCK_REPORTS } from '@/mock/reports';
 import { mapReport } from '@/utils/map-report';
 
 /**
  * GET /api/reports?uuid=D198349
  * Fetch all reports for Patient UUID from Cloud Firestore via Firebase Admin SDK.
+ * Returns empty array if no reports exist for this Patient UUID.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -15,20 +15,7 @@ export async function GET(request: NextRequest) {
     const snapshot = await adminDb.collection('users').doc(uuid).collection('reports').orderBy('date', 'desc').get();
 
     if (snapshot.empty) {
-      // Auto-seed baseline reports into Firestore via Admin SDK
-      const batch = adminDb.batch();
-      const seeded: any[] = [];
-
-      RAW_MOCK_REPORTS.forEach((raw) => {
-        const ref = adminDb.collection('users').doc(uuid).collection('reports').doc(raw.id);
-        batch.set(ref, { ...raw, patient_id: uuid, createdAt: new Date() });
-        const mapped = mapReport(raw, raw.id);
-        mapped.patientId = uuid;
-        seeded.push(mapped);
-      });
-
-      await batch.commit();
-      return NextResponse.json({ success: true, reports: seeded });
+      return NextResponse.json({ success: true, reports: [] });
     }
 
     const reports = snapshot.docs.map((doc) => {
@@ -41,12 +28,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, reports });
   } catch (error: any) {
     console.warn('Server API Firestore fetch warning:', error);
-    const fallback = RAW_MOCK_REPORTS.map((raw) => {
-      const r = mapReport(raw, raw.id);
-      r.patientId = uuid;
-      return r;
-    });
-    return NextResponse.json({ success: true, reports: fallback });
+    return NextResponse.json({ success: true, reports: [] });
   }
 }
 
