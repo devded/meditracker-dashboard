@@ -7,6 +7,29 @@ export interface ApiTest {
   category: string;
 }
 
+/**
+ * Provenance record for the original PDF/image a report was extracted from.
+ * Firestore stays authoritative for the structured data; this points at the
+ * immutable original that lets the extraction be verified or re-run.
+ */
+export interface SourceFile {
+  /** Where the bytes live: Tigris object storage, or the server-local fallback. */
+  backend: 's3' | 'local';
+  /** Object key within the bucket, or path relative to the data dir. */
+  path: string;
+  /** Bucket the object key belongs to. */
+  bucket?: string;
+  /** Original filename as uploaded. */
+  filename: string;
+  contentType: string;
+  size: number;
+  /** Content hash — dedupe key and integrity check. */
+  sha256: string;
+  uploadedAt: string;
+  /** Extractor that produced the structured data from this file. */
+  extractorModel?: string;
+}
+
 export interface ApiReport {
   patient_name: string;
   patient_id: string;
@@ -15,6 +38,7 @@ export interface ApiReport {
   doctor_name: string;
   clinical_summary: string;
   tests: ApiTest[];
+  source_file?: SourceFile | null;
 }
 
 export interface ParsedApiResponse {
@@ -43,7 +67,8 @@ export interface Report {
   labName: string;
   doctorName: string;
   clinicalSummary: string;
-  originalFileUrl: string;
+  /** Null for reports created by pasting JSON, which have no source document. */
+  originalFile: SourceFile | null;
   tests: Test[];
 }
 
